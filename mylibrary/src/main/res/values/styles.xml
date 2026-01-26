@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DsButton" parent="Widget.Material3.Button">
+        <item name="android:textSize">@dimen/font_size</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+    </style>
+    <style name="DsEditText">
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="hintTextColor">@color/black_100</item>
+        <item name="android:textColor">@color/black_150</item>
+        <item name="android:paddingStart">@dimen/padding_4</item>
+    </style>
+</resources>

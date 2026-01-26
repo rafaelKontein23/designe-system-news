@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="border_button_radius">5dp</dimen>
+    <dimen name="border_input_radius">10dp</dimen>
+    <dimen name="font_size">14sp</dimen>
+    <dimen name="font_size_12">12sp</dimen>
+    <dimen name="margin_horizontal_16">16dp</dimen>
+    <dimen name="size_1">1dp</dimen>
+    <dimen name="size_48">48dp</dimen>
+    <dimen name="padding_4">4dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="padding_52">52dp</dimen>
+</resources>

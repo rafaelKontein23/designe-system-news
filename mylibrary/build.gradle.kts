@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    `maven-publish`
 }
 
 android {
@@ -41,6 +40,8 @@ android {
         jvmTarget = "11"
     }
 }
+group = "com.github.rafaelKontein23"
+version = "1.0.0"
 
 dependencies {
 
@@ -50,16 +51,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-}
-publishing  {
-    publications {
-        create("release", MavenPublication::class) {
-            groupId = "com.github.rafaelKontein23"
-            artifactId = "Dsnews"
-            version = "V1.0.0"
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
 }

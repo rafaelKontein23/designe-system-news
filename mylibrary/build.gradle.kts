@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    `maven-publish`
 }
 
 android {
@@ -17,6 +18,12 @@ android {
         viewBinding = true
     }
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -43,4 +50,16 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+publishing  {
+    publications {
+        create("release", MavenPublication::class) {
+            groupId = "com.github.rafaelKontein23"
+            artifactId = "Dsnews"
+            version = "V1.0.0"
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
 }

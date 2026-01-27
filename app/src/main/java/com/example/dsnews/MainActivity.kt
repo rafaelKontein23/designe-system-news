@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.mylibrary.ds.button.DsButton
+import com.example.mylibrary.ds.input.DsInput
 
 class MainActivity : AppCompatActivity() {
     private lateinit var button1 : DsButton
+    private lateinit var input :DsInput
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

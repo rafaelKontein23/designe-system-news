@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.EditText
-import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.example.mylibrary.R
@@ -25,6 +24,7 @@ class DsInput @JvmOverloads constructor(
         private const val EMAIL = 4
         private const val PASSWORD = 5
         private const val DATE = 6
+        private const val TEXT = 7
     }
 
     private var isVisiblePassword = false
@@ -35,6 +35,27 @@ class DsInput @JvmOverloads constructor(
         attrs?.let {
             val ta = context.obtainStyledAttributes(it, R.styleable.DsInput)
             val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType, 1)
+
+            binding.inputText.hint = ta.getString(R.styleable.DsInput_android_hint)
+
+            ta.getString(R.styleable.DsInput_android_text)?.let { text ->
+                binding.inputText.setText(text)
+            }
+
+            val textColor = ta.getColor(R.styleable.DsInput_android_textColor, -1)
+            if (textColor != -1) binding.inputText.setTextColor(textColor)
+
+            val textColorHint = ta.getColor(R.styleable.DsInput_android_textColorHint, -1)
+            if (textColorHint != -1) binding.inputText.setHintTextColor(textColorHint)
+
+            val inputType = ta.getInt(R.styleable.DsInput_android_inputType, -1)
+            if (inputType != -1) binding.inputText.inputType = inputType
+
+            val maxLength = ta.getInt(R.styleable.DsInput_android_maxLength, -1)
+            if (maxLength != -1) {
+                binding.inputText.filters = arrayOf(android.text.InputFilter.LengthFilter(maxLength))
+            }
+
             ta.recycle()
 
             when (keyboardType) {
@@ -65,6 +86,9 @@ class DsInput @JvmOverloads constructor(
                     applyInputMask(binding.inputText, MaskType.DATE)
                 }
 
+                TEXT -> {
+                    binding.inputText.inputType = InputType.TYPE_CLASS_TEXT
+                }
                 else -> {
                     android.text.InputType.TYPE_CLASS_TEXT
                 }
@@ -125,6 +149,10 @@ class DsInput @JvmOverloads constructor(
     private fun inputEmail() {
         binding.inputText.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
         binding.eyePassword.isVisible = false
+    }
+    fun getTextString(): String = binding.inputText.text?.toString() ?: ""
+    fun setText(text:String) {
+        binding.inputText.setText(text)
     }
 
     private fun inputPassword() {

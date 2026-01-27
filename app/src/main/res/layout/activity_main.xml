@@ -10,7 +10,7 @@
     <com.example.mylibrary.ds.button.DsButton
         android:id="@+id/btn1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginTop="68dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -19,9 +19,12 @@
         app:textDS="da dabfa" />
 
     <com.example.mylibrary.ds.input.DsInput
+        android:id="@+id/Rafa"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         app:inputKeyboardType="phone"
+        android:hint="djkbsakbsajk"
+        android:layout_margin="@dimen/margin_12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

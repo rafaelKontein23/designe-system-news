@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 No `build.gradle` (ou `build.gradle.kts`) do seu módulo app, inclua:
 
 ```kotlin
-implementation("com.github.rafaelKontein23.designe-system-news:mylibrary:v1.0.0")
+implementation("com.github.rafaelKontein23.designe-system-news:mylibrary:v1.0.1")
 ```
 
 > ⚠️ Sempre confira a versão/tag mais recente no [JitPack](https://jitpack.io/#rafaelKontein23/designe-system-news) ou no seu GitHub Releases.

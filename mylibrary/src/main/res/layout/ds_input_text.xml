@@ -9,6 +9,7 @@
         android:id="@+id/input_text"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_48"
+        android:text="aassd"
         style="@style/DsEditText"
         android:background="@drawable/input_border_radius"
         app:layout_constraintEnd_toEndOf="parent"

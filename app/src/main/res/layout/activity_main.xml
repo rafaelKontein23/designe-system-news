@@ -7,22 +7,59 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.example.mylibrary.ds.button.DsButton
-        android:id="@+id/btn1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="68dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:textDS="da dabfa" />
+        app:layout_constraintBottom_toTopOf="@id/text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+        <com.example.mylibrary.ds.button.DsButton
+            android:id="@+id/btn1"
+            android:layout_margin="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Primary Button"
+            app:backgroundColorDS="@color/black"
+            app:buttonType="primary" />
+
+        <com.example.mylibrary.ds.button.DsButton
+            android:id="@+id/btn2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textDS="Secondary Button"
+            app:buttonType="secondary" />
+
+        <com.example.mylibrary.ds.button.DsButton
+            android:id="@+id/btn3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textDS="Outlined Button"
+            app:buttonType="outlined" />
+
+        <com.example.mylibrary.ds.button.DsButton
+            android:id="@+id/btn4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textDS="Text Button"
+            app:buttonType="text" />
+
+        <com.example.mylibrary.ds.button.DsButton
+            android:id="@+id/btn5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:textDS="Danger Button"
+            app:buttonType="danger" />
+
+    </LinearLayout>
 
     <com.example.mylibrary.ds.input.DsInput
-        android:id="@+id/Rafa"
+        android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:inputKeyboardType="phone"
+        app:inputKeyboardType="text"
         android:hint="djkbsakbsajk"
         android:layout_margin="@dimen/margin_12"
         app:layout_constraintBottom_toBottomOf="parent"

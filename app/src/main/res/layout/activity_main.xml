@@ -59,13 +59,23 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:inputKeyboardType="text"
+        app:inputKeyboardType="password"
         android:hint="djkbsakbsajk"
         android:layout_margin="@dimen/margin_12"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    </com.example.mylibrary.ds.input.DsInput>
+    <com.example.mylibrary.ds.input.DsInput
+        android:id="@+id/textz"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:inputKeyboardType="email"
+        android:hint="djkbsakbsajk"
+        android:layout_margin="@dimen/margin_12"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,7 @@ import com.example.mylibrary.ds.input.DsInput
 
 class MainActivity : AppCompatActivity() {
     private lateinit var input: DsInput
+    private lateinit var input2: DsInput
     private lateinit var btn1: DsButton
     private lateinit var btn2: DsButton
     private lateinit var btn3: DsButton
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         input = findViewById(R.id.text)
+        input2 = findViewById(R.id.textz)
         btn1 = findViewById(R.id.btn1)
         btn2 = findViewById(R.id.btn2)
         btn3 = findViewById(R.id.btn3)
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupButtonListeners() {
         btn1.setDsClickListener {
             input.setText("Botão Primary clicado!")
+            input.error = "Botão Primary clicado!"
+            input2.error = "Botão Primary clicado!"
             Toast.makeText(this, "Primary Button", Toast.LENGTH_SHORT).show()
         }
 

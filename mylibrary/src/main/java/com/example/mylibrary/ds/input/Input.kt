@@ -1,22 +1,22 @@
 package com.example.mylibrary.ds.input
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
+import android.view.MotionEvent
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import com.example.mylibrary.R
-import com.example.mylibrary.databinding.DsInputTextBinding
 
 class DsInput @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+    defStyleAttr: Int = android.R.attr.editTextStyle
+) : AppCompatEditText(context, attrs, defStyleAttr) {
+
     companion object {
         private const val CPF = 1
         private const val NUMBER = 2
@@ -28,76 +28,71 @@ class DsInput @JvmOverloads constructor(
     }
 
     private var isVisiblePassword = false
-
-    private val binding = DsInputTextBinding.inflate(LayoutInflater.from(context), this, true)
+    private var eyeIcon: Drawable? = null
 
     init {
+        setBackgroundResource(R.drawable.input_border_radius)
+        setTextAppearance(R.style.DsEditText)
+
+        val padding = context.resources.getDimensionPixelSize(R.dimen.padding_7)
+        setPadding(padding, paddingTop, padding, paddingBottom)
+
         attrs?.let {
             val ta = context.obtainStyledAttributes(it, R.styleable.DsInput)
-            val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType, 1)
-
-            binding.inputText.hint = ta.getString(R.styleable.DsInput_android_hint)
-
-            ta.getString(R.styleable.DsInput_android_text)?.let { text ->
-                binding.inputText.setText(text)
-            }
-
-            val textColor = ta.getColor(R.styleable.DsInput_android_textColor, -1)
-            if (textColor != -1) binding.inputText.setTextColor(textColor)
-
-            val textColorHint = ta.getColor(R.styleable.DsInput_android_textColorHint, -1)
-            if (textColorHint != -1) binding.inputText.setHintTextColor(textColorHint)
-
-            val inputType = ta.getInt(R.styleable.DsInput_android_inputType, -1)
-            if (inputType != -1) binding.inputText.inputType = inputType
-
-            val maxLength = ta.getInt(R.styleable.DsInput_android_maxLength, -1)
-            if (maxLength != -1) {
-                binding.inputText.filters = arrayOf(android.text.InputFilter.LengthFilter(maxLength))
-            }
+            val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType, TEXT)
 
             ta.recycle()
 
             when (keyboardType) {
                 CPF -> {
-                    binding.inputText.inputType = InputType.TYPE_CLASS_NUMBER
-                    applyInputMask(binding.inputText, MaskType.CPF)
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    applyInputMask(this, MaskType.CPF)
                 }
-
-                NUMBER -> {
-                    inputNumber()
-                }
-
+                NUMBER -> inputNumber()
                 PHONE -> {
-                    binding.inputText.inputType = InputType.TYPE_CLASS_NUMBER
-
-                    applyInputMask(binding.inputText, MaskType.PHONE)
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    applyInputMask(this, MaskType.PHONE)
                 }
-
-                EMAIL -> {
-                    inputEmail()
-                }
-
-                PASSWORD -> {
-                    inputPassword()
-                }
+                EMAIL -> inputEmail()
+                PASSWORD -> inputPassword()
                 DATE -> {
-                    binding.inputText.inputType = InputType.TYPE_CLASS_NUMBER
-                    applyInputMask(binding.inputText, MaskType.DATE)
+                    inputType = InputType.TYPE_CLASS_NUMBER
+                    applyInputMask(this, MaskType.DATE)
                 }
-
-                TEXT -> {
-                    binding.inputText.inputType = InputType.TYPE_CLASS_TEXT
-                }
-                else -> {
-                    android.text.InputType.TYPE_CLASS_TEXT
-                }
+                TEXT -> inputType = InputType.TYPE_CLASS_TEXT
             }
-
         }
     }
 
-    fun applyInputMask(editText: EditText, maskType: MaskType) {
+    private fun inputPassword() {
+        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)
+        updatePasswordIcon()
+
+        val paddingRight = context.resources.getDimensionPixelSize(R.dimen.margin_12)
+        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    }
+
+    private fun updatePasswordIcon() {
+        eyeIcon?.let {
+            val size = context.resources.getDimensionPixelSize(R.dimen.size_24)
+            it.setBounds(0, 0, size, size)
+        }
+        compoundDrawablePadding = context.resources.getDimensionPixelSize(R.dimen.margin_12)
+        setCompoundDrawables(null, null, eyeIcon, null)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (eyeIcon != null && event.action == MotionEvent.ACTION_UP) {
+            val drawableEnd = compoundDrawables[2]
+            if (drawableEnd != null && event.rawX >= (right - drawableEnd.bounds.width() - paddingRight)) {
+                togglePasswordVisibility()
+                return true
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+    fun applyInputMask(editText: AppCompatEditText, maskType: MaskType) {
         val mask = when (maskType) {
             MaskType.CPF -> "###.###.###-##"
             MaskType.PHONE -> "(##) #####-####"
@@ -109,7 +104,6 @@ class DsInput @JvmOverloads constructor(
             var oldText = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
@@ -117,7 +111,6 @@ class DsInput @JvmOverloads constructor(
                 val str = unmask(s.toString())
                 var masked = ""
                 var i = 0
-
 
                 for (char in mask) {
                     if (char != '#' && str.length > oldText.length) {
@@ -141,50 +134,31 @@ class DsInput @JvmOverloads constructor(
         })
     }
 
-
     private fun unmask(s: String): String {
         return s.replace(Regex("[^\\d]"), "")
     }
 
     private fun inputEmail() {
-        binding.inputText.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        binding.eyePassword.isVisible = false
-    }
-    fun getTextString(): String = binding.inputText.text?.toString() ?: ""
-    fun setText(text:String) {
-        binding.inputText.setText(text)
+        inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
     }
 
-    private fun inputPassword() {
-        binding.inputText.inputType =
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        binding.eyePassword.isVisible = true
-        val originalLeft = binding.inputText.paddingLeft
-        val originalTop = binding.inputText.paddingTop
-        val originalRight = context.resources.getDimensionPixelSize(R.dimen.padding_52)
-        val originalBottom = binding.inputText.paddingBottom
+    private fun togglePasswordVisibility() {
+        isVisiblePassword = !isVisiblePassword
 
-        binding.inputText.setPadding(
-            originalLeft, originalTop, originalRight, originalBottom
-        )
-
-        binding.eyePassword.setOnClickListener {
-            if (isVisiblePassword) {
-                isVisiblePassword = false
-                binding.inputText.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                binding.eyePassword.setImageResource(R.drawable.baseline_visibility_24)
-            } else {
-                isVisiblePassword = true
-                binding.inputText.inputType = InputType.TYPE_CLASS_TEXT
-                binding.eyePassword.setImageResource(R.drawable.baseline_visibility_off_24)
-            }
+        if (isVisiblePassword) {
+            inputType = InputType.TYPE_CLASS_TEXT
+            eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_off_24)
+        } else {
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)
         }
+
+        updatePasswordIcon()
+        setSelection(text?.length ?: 0)
     }
 
     private fun inputNumber() {
-        binding.eyePassword.isVisible = false
-        binding.inputText.inputType = InputType.TYPE_CLASS_NUMBER
+        inputType = InputType.TYPE_CLASS_NUMBER
     }
 
     enum class MaskType {

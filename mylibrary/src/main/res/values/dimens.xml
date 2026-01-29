@@ -6,8 +6,10 @@
     <dimen name="font_size_12">12sp</dimen>
     <dimen name="margin_horizontal_16">16dp</dimen>
     <dimen name="size_1">1dp</dimen>
+    <dimen name="size_24">24dp</dimen>
     <dimen name="size_48">48dp</dimen>
     <dimen name="padding_4">4dp</dimen>
     <dimen name="margin_12">12dp</dimen>
     <dimen name="padding_52">52dp</dimen>
+    <dimen name="padding_7">7dp</dimen>
 </resources>

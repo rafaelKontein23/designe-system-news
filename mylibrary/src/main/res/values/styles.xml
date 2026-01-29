@@ -3,7 +3,15 @@
     <style name="DsButton" parent="Widget.Material3.Button">
         <item name="android:textSize">@dimen/font_size</item>
         <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="shapeAppearanceOverlay">@style/DsButton.Shape</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
+
+    <style name="DsButton.Shape">
+        <item name="cornerSize">@dimen/border_button_radius</item>
+    </style>
+
     <style name="DsEditText">
         <item name="android:textSize">@dimen/font_size_12</item>
         <item name="android:fontFamily">@font/poppins</item>

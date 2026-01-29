@@ -2,6 +2,17 @@
 <resources>
     <declare-styleable name="DsButton">
         <attr name="textDS" format="string" />
+        <attr name="buttonType" format="enum">
+            <enum name="primary" value="0"/>
+            <enum name="secondary" value="1"/>
+            <enum name="outlined" value="2"/>
+            <enum name="text" value="3"/>
+            <enum name="danger" value="4"/>
+        </attr>
+        <attr name="iconStart" format="reference"/>
+        <attr name="iconEnd" format="reference"/>
+        <attr name="backgroundColorDS" format="color|reference"/>
+        <attr name="textColorDS" format="color|reference"/>
     </declare-styleable>
 
     <declare-styleable name="DsInput">

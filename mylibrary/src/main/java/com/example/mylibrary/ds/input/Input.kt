@@ -74,7 +74,6 @@ class DsInput @JvmOverloads constructor(
         }
     }
 
-
     private fun inputPassword() {
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)

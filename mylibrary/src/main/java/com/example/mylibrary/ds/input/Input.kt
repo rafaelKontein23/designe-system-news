@@ -64,6 +64,16 @@ class DsInput @JvmOverloads constructor(
         }
     }
 
+    override fun setError(error: CharSequence?, icon: Drawable?) {
+        if (error != null) {
+            setBackgroundResource(R.drawable.input_border_radius_error)
+            super.setError(error, if (eyeIcon != null) null else icon)
+        } else {
+            setBackgroundResource(R.drawable.input_border_radius)
+            super.setError(null, null)
+        }
+    }
+
     private fun inputPassword() {
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)

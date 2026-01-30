@@ -18,11 +18,13 @@
 
     </EditText>
 
-    <ImageView
+    <ImageButton
         android:id="@+id/eye_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/toggle_password_visibility"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="@dimen/margin_12"
         app:layout_constraintEnd_toEndOf="@+id/input_text"

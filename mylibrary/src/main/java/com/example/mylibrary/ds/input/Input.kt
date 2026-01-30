@@ -1,14 +1,20 @@
 package com.example.mylibrary.ds.input
 
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.widget.ImageButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
+import androidx.customview.widget.ExploreByTouchHelper
 import com.example.mylibrary.R
 
 class DsInput @JvmOverloads constructor(
@@ -29,6 +35,7 @@ class DsInput @JvmOverloads constructor(
 
     private var isVisiblePassword = false
     private var eyeIcon: Drawable? = null
+    private var touchHelper: ExploreByTouchHelper? = null
 
     init {
         setBackgroundResource(R.drawable.input_border_radius)
@@ -81,6 +88,87 @@ class DsInput @JvmOverloads constructor(
 
         val paddingRight = context.resources.getDimensionPixelSize(R.dimen.margin_12)
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+        
+        setupPasswordAccessibility()
+    }
+    
+    private fun setupPasswordAccessibility() {
+        if (eyeIcon == null) return
+        
+        touchHelper = object : ExploreByTouchHelper(this) {
+            override fun getVirtualViewAt(x: Float, y: Float): Int {
+                val drawableEnd = compoundDrawables[2]
+                if (drawableEnd != null) {
+                    val drawableRight = right - paddingRight
+                    val drawableLeft = drawableRight - drawableEnd.bounds.width()
+                    if (x >= drawableLeft && x <= drawableRight) {
+                        return 1 // ID do botão virtual
+                    }
+                }
+                return INVALID_ID
+            }
+
+            override fun getVisibleVirtualViews(mutableList: MutableList<Int>) {
+                if (eyeIcon != null) {
+                    mutableList.add(1) // ID do botão virtual
+                }
+            }
+
+            override fun onPopulateNodeForVirtualView(
+                virtualViewId: Int,
+                node: AccessibilityNodeInfoCompat
+            ) {
+                if (virtualViewId == 1 && eyeIcon != null) {
+                    val drawableEnd = compoundDrawables[2]
+                    if (drawableEnd != null) {
+                        val drawableRight = right - paddingRight
+                        val drawableLeft = drawableRight - drawableEnd.bounds.width()
+                        val drawableTop = paddingTop
+                        val drawableBottom = height - paddingBottom
+                        
+                        val actionLabel = if (isVisiblePassword) {
+                            context.getString(R.string.hide_password)
+                        } else {
+                            context.getString(R.string.show_password)
+                        }
+                        
+                        node.contentDescription = "${context.getString(R.string.toggle_password_visibility)}. $actionLabel"
+                        node.addAction(AccessibilityActionCompat.ACTION_CLICK)
+                        node.setBoundsInParent(
+                            Rect(
+                                drawableLeft,
+                                drawableTop,
+                                drawableRight,
+                                drawableBottom
+                            )
+                        )
+                        node.className = ImageButton::class.java.name
+                    }
+                }
+            }
+
+            override fun onPerformActionForVirtualView(
+                virtualViewId: Int,
+                action: Int,
+                arguments: android.os.Bundle?
+            ): Boolean {
+                if (virtualViewId == 1 && action == AccessibilityNodeInfoCompat.ACTION_CLICK) {
+                    togglePasswordVisibility()
+                    announceForAccessibility(
+                        if (isVisiblePassword) {
+                            context.getString(R.string.password_visible)
+                        } else {
+                            context.getString(R.string.password_hidden)
+                        }
+                    )
+                    invalidateVirtualView(1)
+                    return true
+                }
+                return false
+            }
+        }
+        
+        ViewCompat.setAccessibilityDelegate(this, touchHelper)
     }
 
     private fun updatePasswordIcon() {
@@ -90,6 +178,9 @@ class DsInput @JvmOverloads constructor(
         }
         compoundDrawablePadding = context.resources.getDimensionPixelSize(R.dimen.margin_12)
         setCompoundDrawables(null, null, eyeIcon, null)
+        
+        // Invalida o nó virtual de acessibilidade quando o ícone é atualizado
+        touchHelper?.invalidateVirtualView(1)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

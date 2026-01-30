@@ -6,4 +6,19 @@
     <string name="digite_email">
         Digite seu e-mail
     </string>
+    <string name="toggle_password_visibility">
+        Alternar visibilidade da senha
+    </string>
+    <string name="show_password">
+        Mostrar senha
+    </string>
+    <string name="hide_password">
+        Ocultar senha
+    </string>
+    <string name="password_visible">
+        Senha visível
+    </string>
+    <string name="password_hidden">
+        Senha oculta
+    </string>
 </resources>

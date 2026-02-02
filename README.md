@@ -71,6 +71,18 @@ input
         PASSWORD
         DATE
 
+---
+chip
+
+    <com.example.mylibrary.ds.chip.DsChip
+        android:id="@+id/chip_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:chipText="TEXTO DO CHIP"
+        app:chipBackgroundColorDS="@android:color/holo_blue_dark"
+        app:chipTextColorDS="@android:color/white" />
+
+
 ## Links úteis
 
 - [Página do projeto no JitPack](https://jitpack.io/#rafaelKontein23/designe-system-news)

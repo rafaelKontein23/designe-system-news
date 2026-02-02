@@ -77,5 +77,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
+    <com.example.mylibrary.ds.chip.DsChip
+        android:id="@+id/chip_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:chipBackgroundColorDS="@android:color/holo_blue_dark"
+        app:chipText="NOVO"
+        app:chipTextColorDS="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textz" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

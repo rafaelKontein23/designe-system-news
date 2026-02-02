@@ -34,4 +34,10 @@
             <enum name="text" value="7"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="DsChip">
+        <attr name="chipText" format="string" />
+        <attr name="chipBackgroundColorDS" format="color|reference" />
+        <attr name="chipTextColorDS" format="color|reference" />
+    </declare-styleable>
 </resources>

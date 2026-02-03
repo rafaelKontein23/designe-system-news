@@ -23,19 +23,19 @@ class DsInput @JvmOverloads constructor(
     defStyleAttr: Int = android.R.attr.editTextStyle
 ) : AppCompatEditText(context, attrs, defStyleAttr) {
 
-    companion object {
-        private const val CPF = 1
-        private const val NUMBER = 2
-        private const val PHONE = 3
-        private const val EMAIL = 4
-        private const val PASSWORD = 5
-        private const val DATE = 6
-        private const val TEXT = 7
+    enum class KeyboardType {
+        CPF, NUMBER, PHONE, EMAIL, PASSWORD, DATE, TEXT
+    }
+
+    enum class MaskType {
+        CPF, PHONE, DATE
     }
 
     private var isVisiblePassword = false
     private var eyeIcon: Drawable? = null
     private var touchHelper: ExploreByTouchHelper? = null
+
+    private var maskWatcher: TextWatcher? = null
 
     init {
         setBackgroundResource(R.drawable.input_border_radius)
@@ -46,29 +46,61 @@ class DsInput @JvmOverloads constructor(
 
         attrs?.let {
             val ta = context.obtainStyledAttributes(it, R.styleable.DsInput)
-            val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType, TEXT)
-
+            val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType,KeyboardType.TEXT.ordinal + 1)
             ta.recycle()
+            setKeyboardTypeFromXml(keyboardType)
+        }
+    }
 
-            when (keyboardType) {
-                CPF -> {
-                    inputType = InputType.TYPE_CLASS_NUMBER
-                    applyInputMask(this, MaskType.CPF)
-                }
-                NUMBER -> inputNumber()
-                PHONE -> {
-                    inputType = InputType.TYPE_CLASS_NUMBER
-                    applyInputMask(this, MaskType.PHONE)
-                }
-                EMAIL -> inputEmail()
-                PASSWORD -> inputPassword()
-                DATE -> {
-                    inputType = InputType.TYPE_CLASS_NUMBER
-                    applyInputMask(this, MaskType.DATE)
-                }
-                TEXT -> inputType = InputType.TYPE_CLASS_TEXT
+    fun setKeyboardType(type: KeyboardType) {
+        clearMask()
+        clearPasswordIcon()
+
+        when (type) {
+            KeyboardType.CPF -> {
+                inputType = InputType.TYPE_CLASS_NUMBER
+                applyInputMask(MaskType.CPF)
+            }
+
+            KeyboardType.NUMBER -> {
+                inputType = InputType.TYPE_CLASS_NUMBER
+            }
+
+            KeyboardType.PHONE -> {
+                inputType = InputType.TYPE_CLASS_NUMBER
+                applyInputMask(MaskType.PHONE)
+            }
+
+            KeyboardType.EMAIL -> {
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            }
+
+            KeyboardType.PASSWORD -> {
+                inputPassword()
+            }
+
+            KeyboardType.DATE -> {
+                inputType = InputType.TYPE_CLASS_NUMBER
+                applyInputMask(MaskType.DATE)
+            }
+
+            KeyboardType.TEXT -> {
+                inputType = InputType.TYPE_CLASS_TEXT
             }
         }
+    }
+
+    private fun setKeyboardTypeFromXml(type: Int) {
+        val mapped = when (type) {
+            1 -> KeyboardType.CPF
+            2 -> KeyboardType.NUMBER
+            3 -> KeyboardType.PHONE
+            4 -> KeyboardType.EMAIL
+            5 -> KeyboardType.PASSWORD
+            6 -> KeyboardType.DATE
+            else -> KeyboardType.TEXT
+        }
+        setKeyboardType(mapped)
     }
 
     override fun setError(error: CharSequence?, icon: Drawable?) {
@@ -88,63 +120,55 @@ class DsInput @JvmOverloads constructor(
 
         val paddingRight = context.resources.getDimensionPixelSize(R.dimen.margin_12)
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
-        
+
         setupPasswordAccessibility()
     }
-    
+
+    private fun clearPasswordIcon() {
+        eyeIcon = null
+        setCompoundDrawables(null, null, null, null)
+        touchHelper = null
+        ViewCompat.setAccessibilityDelegate(this, null)
+    }
+
     private fun setupPasswordAccessibility() {
         if (eyeIcon == null) return
-        
+
         touchHelper = object : ExploreByTouchHelper(this) {
             override fun getVirtualViewAt(x: Float, y: Float): Int {
                 val drawableEnd = compoundDrawables[2]
                 if (drawableEnd != null) {
                     val drawableRight = right - paddingRight
                     val drawableLeft = drawableRight - drawableEnd.bounds.width()
-                    if (x >= drawableLeft && x <= drawableRight) {
-                        return 1 // ID do botão virtual
-                    }
+                    if (x >= drawableLeft && x <= drawableRight) return 1
                 }
                 return INVALID_ID
             }
 
             override fun getVisibleVirtualViews(mutableList: MutableList<Int>) {
-                if (eyeIcon != null) {
-                    mutableList.add(1) // ID do botão virtual
-                }
+                if (eyeIcon != null) mutableList.add(1)
             }
 
-            override fun onPopulateNodeForVirtualView(
-                virtualViewId: Int,
-                node: AccessibilityNodeInfoCompat
-            ) {
-                if (virtualViewId == 1 && eyeIcon != null) {
-                    val drawableEnd = compoundDrawables[2]
-                    if (drawableEnd != null) {
-                        val drawableRight = right - paddingRight
-                        val drawableLeft = drawableRight - drawableEnd.bounds.width()
-                        val drawableTop = paddingTop
-                        val drawableBottom = height - paddingBottom
-                        
-                        val actionLabel = if (isVisiblePassword) {
-                            context.getString(R.string.hide_password)
-                        } else {
-                            context.getString(R.string.show_password)
-                        }
-                        
-                        node.contentDescription = "${context.getString(R.string.toggle_password_visibility)}. $actionLabel"
-                        node.addAction(AccessibilityActionCompat.ACTION_CLICK)
-                        node.setBoundsInParent(
-                            Rect(
-                                drawableLeft,
-                                drawableTop,
-                                drawableRight,
-                                drawableBottom
-                            )
-                        )
-                        node.className = ImageButton::class.java.name
-                    }
+            override fun onPopulateNodeForVirtualView(virtualViewId: Int, node: AccessibilityNodeInfoCompat) {
+                if (virtualViewId != 1 || eyeIcon == null) return
+
+                val drawableEnd = compoundDrawables[2] ?: return
+                val drawableRight = right - paddingRight
+                val drawableLeft = drawableRight - drawableEnd.bounds.width()
+                val drawableTop = paddingTop
+                val drawableBottom = height - paddingBottom
+
+                val actionLabel = if (isVisiblePassword) {
+                    context.getString(R.string.hide_password)
+                } else {
+                    context.getString(R.string.show_password)
                 }
+
+                node.contentDescription =
+                    "${context.getString(R.string.toggle_password_visibility)}. $actionLabel"
+                node.addAction(AccessibilityActionCompat.ACTION_CLICK)
+                node.setBoundsInParent(Rect(drawableLeft, drawableTop, drawableRight, drawableBottom))
+                node.className = ImageButton::class.java.name
             }
 
             override fun onPerformActionForVirtualView(
@@ -155,11 +179,8 @@ class DsInput @JvmOverloads constructor(
                 if (virtualViewId == 1 && action == AccessibilityNodeInfoCompat.ACTION_CLICK) {
                     togglePasswordVisibility()
                     announceForAccessibility(
-                        if (isVisiblePassword) {
-                            context.getString(R.string.password_visible)
-                        } else {
-                            context.getString(R.string.password_hidden)
-                        }
+                        if (isVisiblePassword) context.getString(R.string.password_visible)
+                        else context.getString(R.string.password_hidden)
                     )
                     invalidateVirtualView(1)
                     return true
@@ -167,7 +188,7 @@ class DsInput @JvmOverloads constructor(
                 return false
             }
         }
-        
+
         ViewCompat.setAccessibilityDelegate(this, touchHelper)
     }
 
@@ -178,8 +199,6 @@ class DsInput @JvmOverloads constructor(
         }
         compoundDrawablePadding = context.resources.getDimensionPixelSize(R.dimen.margin_12)
         setCompoundDrawables(null, null, eyeIcon, null)
-        
-        // Invalida o nó virtual de acessibilidade quando o ícone é atualizado
         touchHelper?.invalidateVirtualView(1)
     }
 
@@ -193,14 +212,15 @@ class DsInput @JvmOverloads constructor(
         }
         return super.onTouchEvent(event)
     }
-    fun applyInputMask(editText: AppCompatEditText, maskType: MaskType) {
+
+    private fun applyInputMask(maskType: MaskType) {
         val mask = when (maskType) {
             MaskType.CPF -> "###.###.###-##"
             MaskType.PHONE -> "(##) #####-####"
             MaskType.DATE -> "##/##/####"
         }
 
-        editText.addTextChangedListener(object : TextWatcher {
+        val watcher = object : TextWatcher {
             var isUpdating = false
             var oldText = ""
 
@@ -209,7 +229,7 @@ class DsInput @JvmOverloads constructor(
 
             override fun afterTextChanged(s: Editable?) {
                 if (isUpdating) return
-                val str = unmask(s.toString())
+                val str = unmask(s?.toString().orEmpty())
                 var masked = ""
                 var i = 0
 
@@ -218,30 +238,29 @@ class DsInput @JvmOverloads constructor(
                         masked += char
                         continue
                     }
-                    try {
-                        masked += str[i]
-                    } catch (e: Exception) {
-                        break
-                    }
+                    if (i >= str.length) break
+                    masked += str[i]
                     i++
                 }
 
                 isUpdating = true
-                editText.setText(masked)
-                editText.setSelection(masked.length)
+                setText(masked)
+                setSelection(masked.length)
                 isUpdating = false
                 oldText = str
             }
-        })
+        }
+
+        maskWatcher = watcher
+        addTextChangedListener(watcher)
     }
 
-    private fun unmask(s: String): String {
-        return s.replace(Regex("[^\\d]"), "")
+    private fun clearMask() {
+        maskWatcher?.let { removeTextChangedListener(it) }
+        maskWatcher = null
     }
 
-    private fun inputEmail() {
-        inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-    }
+    private fun unmask(s: String): String = s.replace(Regex("[^\\d]"), "")
 
     private fun togglePasswordVisibility() {
         isVisiblePassword = !isVisiblePassword
@@ -256,13 +275,5 @@ class DsInput @JvmOverloads constructor(
 
         updatePasswordIcon()
         setSelection(text?.length ?: 0)
-    }
-
-    private fun inputNumber() {
-        inputType = InputType.TYPE_CLASS_NUMBER
-    }
-
-    enum class MaskType {
-        CPF, PHONE, DATE
     }
 }

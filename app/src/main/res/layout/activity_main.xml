@@ -76,6 +76,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
+    <com.example.mylibrary.ds.card.notification.DsNotificationCard
+        android:id="@+id/dscard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:notificationTitle="Teste de Mensagem Longa Lorem Ipsum 1234ds fjndsfjdsnfidsfidsnfdsifndsifndsf"
+        app:notificationDateTime="10/02/2026 às 14:30"
+        app:isNew="true"
+        app:layout_constraintTop_toBottomOf="@id/textz"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <com.example.mylibrary.ds.chip.DsChip
         android:id="@+id/chip_new"
         android:layout_width="wrap_content"
@@ -87,7 +98,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textz" />
+        app:layout_constraintTop_toBottomOf="@+id/dscard" />
 
 
 

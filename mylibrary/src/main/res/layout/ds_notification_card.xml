@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ds_notification_card_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    android:background="#FFFFFF"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/ds_notification_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins"
+        android:layout_marginStart="20dp"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ds_notification_chip"
+        tools:text="Título da Notificação" />
+
+    <com.example.mylibrary.ds.chip.DsChip
+        android:id="@+id/ds_notification_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintStart_toEndOf="@+id/ds_notification_title"
+        app:layout_constraintTop_toTopOf="@+id/ds_notification_title"
+        app:layout_constraintBottom_toBottomOf="@+id/ds_notification_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:chipText="Novo"
+        app:chipBackgroundColorDS="@android:color/holo_blue_dark"
+        app:chipTextColorDS="@android:color/white" />
+
+    <TextView
+        android:id="@+id/ds_notification_datetime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textSize="12sp"
+        android:textColor="#474747"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ds_notification_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="10/02/2026 às 14:30" />
+
+    <View
+        android:id="@+id/ds_notification_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#E0E0E0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ds_notification_datetime"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

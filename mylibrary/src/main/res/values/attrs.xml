@@ -15,6 +15,13 @@
         <attr name="textColorDS" format="color|reference"/>
     </declare-styleable>
 
+    <declare-styleable name="DsNotificationCard">
+        <attr name="notificationTitle" format="string" />
+        <attr name="notificationDateTime" format="string" />
+        <attr name="isNew" format="boolean" />
+    </declare-styleable>
+
+
     <declare-styleable name="DsInput">
         <attr name="android:hint"/>
         <attr name="android:textColor"/>

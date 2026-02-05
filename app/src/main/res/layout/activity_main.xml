@@ -13,10 +13,24 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
+        <!-- Toolbar com dois botões laterais -->
         <com.example.mylibrary.ds.toolbar.DsToolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_two_actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <!-- Toolbar sem botões laterais -->
+        <com.example.mylibrary.ds.toolbar.DsToolbar
+            android:id="@+id/toolbar_no_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Toolbar com título maior e sem botão de voltar -->
+        <com.example.mylibrary.ds.toolbar.DsToolbar
+            android:id="@+id/toolbar_large_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
 
         <com.example.mylibrary.ds.text.DsText
             android:id="@+id/titulo"

@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import com.example.mylibrary.R
 import com.example.mylibrary.ds.text.DsText
 import com.google.android.material.appbar.MaterialToolbar
@@ -24,12 +25,24 @@ class DsToolbar @JvmOverloads constructor(
     private var titleTextView: DsText? = null
     private var titleStyle: DsText.TextStyle = DsText.TextStyle.HEADER
 
+    private val defaultHorizontalPadding =
+        context.resources.getDimensionPixelSize(R.dimen.margin_12)
+
     init {
         layoutParams = LayoutParams(
             LayoutParams.MATCH_PARENT,
             LayoutParams.WRAP_CONTENT
         )
         elevation = 0f
+
+        setPadding(defaultHorizontalPadding, 0, defaultHorizontalPadding, 0)
+
+        minimumHeight = context.resources.getDimensionPixelSize(R.dimen.toolbar_height)
+
+        setContentInsetsAbsolute(0, 0)
+        setContentInsetsRelative(0, 0)
+        contentInsetStartWithNavigation = 0
+        contentInsetEndWithActions = 0
     }
 
     /**
@@ -84,6 +97,7 @@ class DsToolbar @JvmOverloads constructor(
      */
     fun setBackButton(show: Boolean, onClick: (() -> Unit)? = null) {
         if (show) {
+            updatePadding(left = 0)
             val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_chevron_back)
             val scaledDrawable = scaleDrawable(drawable, 24, 24)
             navigationIcon = scaledDrawable
@@ -92,6 +106,7 @@ class DsToolbar @JvmOverloads constructor(
                 onBackClickListener?.invoke()
             }
         } else {
+            updatePadding(left = defaultHorizontalPadding)
             navigationIcon = null
             setNavigationOnClickListener(null)
         }

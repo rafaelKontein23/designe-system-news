@@ -17,18 +17,50 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.Accessibilit
 import androidx.customview.widget.ExploreByTouchHelper
 import com.example.mylibrary.R
 
+/**
+ * Campo de entrada customizado que estende [AppCompatEditText] com suporte a diferentes tipos de teclado,
+ * máscaras de entrada e toggle de visibilidade de senha com acessibilidade.
+ *
+ * @param context O contexto da aplicação
+ * @param attrs Os atributos XML do componente
+ * @param defStyleAttr O estilo padrão aplicado ao componente
+ */
 class DsInput @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.editTextStyle
 ) : AppCompatEditText(context, attrs, defStyleAttr) {
 
+    /**
+     * Tipos de teclado suportados pelo componente.
+     */
     enum class KeyboardType {
-        CPF, NUMBER, PHONE, EMAIL, PASSWORD, DATE, TEXT
+        /** Teclado numérico com máscara para CPF */
+        CPF,
+        /** Teclado numérico sem máscara */
+        NUMBER,
+        /** Teclado numérico com máscara para telefone */
+        PHONE,
+        /** Teclado para e-mail */
+        EMAIL,
+        /** Teclado para senha com toggle de visibilidade */
+        PASSWORD,
+        /** Teclado numérico com máscara para data */
+        DATE,
+        /** Teclado de texto padrão */
+        TEXT
     }
 
+    /**
+     * Tipos de máscara disponíveis para formatação de entrada.
+     */
     enum class MaskType {
-        CPF, PHONE, DATE
+        /** Máscara no formato ###.###.###-## */
+        CPF,
+        /** Máscara no formato (##) #####-#### */
+        PHONE,
+        /** Máscara no formato ##/##/#### */
+        DATE
     }
 
     private var isVisiblePassword = false
@@ -52,6 +84,11 @@ class DsInput @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Define o tipo de teclado e aplica configurações correspondentes.
+     *
+     * @param type O tipo de teclado a ser configurado
+     */
     fun setKeyboardType(type: KeyboardType) {
         clearMask()
         clearPasswordIcon()
@@ -90,6 +127,11 @@ class DsInput @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Converte o valor do tipo de teclado vindo do XML para o enum [KeyboardType].
+     *
+     * @param type O valor inteiro do atributo XML
+     */
     private fun setKeyboardTypeFromXml(type: Int) {
         val mapped = when (type) {
             1 -> KeyboardType.CPF
@@ -103,6 +145,12 @@ class DsInput @JvmOverloads constructor(
         setKeyboardType(mapped)
     }
 
+    /**
+     * Define a mensagem de erro e atualiza o estado visual do componente.
+     *
+     * @param error A mensagem de erro a ser exibida, ou null para remover o erro
+     * @param icon O ícone de erro, ou null para usar o padrão
+     */
     override fun setError(error: CharSequence?, icon: Drawable?) {
         if (error != null) {
             setBackgroundResource(R.drawable.input_border_radius_error)
@@ -113,6 +161,9 @@ class DsInput @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Configura o campo como entrada de senha com toggle de visibilidade.
+     */
     private fun inputPassword() {
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)
@@ -124,6 +175,9 @@ class DsInput @JvmOverloads constructor(
         setupPasswordAccessibility()
     }
 
+    /**
+     * Remove o ícone de visibilidade de senha e recursos de acessibilidade associados.
+     */
     private fun clearPasswordIcon() {
         eyeIcon = null
         setCompoundDrawables(null, null, null, null)
@@ -131,6 +185,9 @@ class DsInput @JvmOverloads constructor(
         ViewCompat.setAccessibilityDelegate(this, null)
     }
 
+    /**
+     * Configura recursos de acessibilidade para o toggle de visibilidade de senha.
+     */
     private fun setupPasswordAccessibility() {
         if (eyeIcon == null) return
 
@@ -192,6 +249,9 @@ class DsInput @JvmOverloads constructor(
         ViewCompat.setAccessibilityDelegate(this, touchHelper)
     }
 
+    /**
+     * Atualiza o ícone de visibilidade de senha.
+     */
     private fun updatePasswordIcon() {
         eyeIcon?.let {
             val size = context.resources.getDimensionPixelSize(R.dimen.size_24)
@@ -202,6 +262,12 @@ class DsInput @JvmOverloads constructor(
         touchHelper?.invalidateVirtualView(1)
     }
 
+    /**
+     * Intercepta eventos de toque para detectar clique no ícone de visibilidade de senha.
+     *
+     * @param event O evento de toque
+     * @return true se o evento foi consumido, false caso contrário
+     */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (eyeIcon != null && event.action == MotionEvent.ACTION_UP) {
             val drawableEnd = compoundDrawables[2]
@@ -213,6 +279,11 @@ class DsInput @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
+    /**
+     * Aplica uma máscara de formatação à entrada de texto.
+     *
+     * @param maskType O tipo de máscara a ser aplicada
+     */
     private fun applyInputMask(maskType: MaskType) {
         val mask = when (maskType) {
             MaskType.CPF -> "###.###.###-##"
@@ -255,13 +326,25 @@ class DsInput @JvmOverloads constructor(
         addTextChangedListener(watcher)
     }
 
+    /**
+     * Remove a máscara de formatação aplicada anteriormente.
+     */
     private fun clearMask() {
         maskWatcher?.let { removeTextChangedListener(it) }
         maskWatcher = null
     }
 
+    /**
+     * Remove caracteres de formatação de uma string, mantendo apenas dígitos.
+     *
+     * @param s A string a ser processada
+     * @return String contendo apenas dígitos
+     */
     private fun unmask(s: String): String = s.replace(Regex("[^\\d]"), "")
 
+    /**
+     * Alterna entre senha visível e oculta.
+     */
     private fun togglePasswordVisibility() {
         isVisiblePassword = !isVisiblePassword
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <public name="ds_icon_chevron_back" type="drawable" />
+    <public name="ds_icon_filter" type="drawable" />
+    <public name="ds_icon_logout" type="drawable" />
+    <public name="ds_icon_notification" type="drawable" />
+    <public name="ds_icon_person" type="drawable" />
+</resources>

@@ -33,13 +33,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.apply {
-            setToolbarTitle("Meu App", DsText.TextStyle.DESCRIPTION)
+        // Toolbar com dois botões laterais
+        binding.toolbarTwoActions.apply {
+            setToolbarTitle("Título com 2 ações", DsText.TextStyle.DESCRIPTION)
             setBackButton(show = true) {
                 finish()
             }
+            setActionButtons(
+                action1Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
+                action1Click = {
+                    Toast.makeText(this@MainActivity, "Buscar", Toast.LENGTH_SHORT).show()
+                },
+                action2Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
+                action2Click = {
+                    Toast.makeText(this@MainActivity, "Mais opções", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
+        // Toolbar sem botões laterais
+        binding.toolbarNoActions.apply {
+            setToolbarTitle("Apenas Título", DsText.TextStyle.DESCRIPTION)
+        }
+
+        // Toolbar com título maior e sem botão de voltar
+        binding.toolbarLargeTitle.apply {
+            setToolbarTitle("Título Grande", DsText.TextStyle.HEADER, centered = false)
+            setActionButtons(
+                action1Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
+                action1Click = {
+                    Toast.makeText(this@MainActivity, "Buscar", Toast.LENGTH_SHORT).show()
+                },
+                action2Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
+                action2Click = {
+                    Toast.makeText(this@MainActivity, "Mais opções", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
+
 
     private fun setupTitle() {
         binding.titulo.setColoredText(

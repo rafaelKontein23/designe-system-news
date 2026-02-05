@@ -133,10 +133,10 @@ class DsText @JvmOverloads constructor(
             FontWeight.MEDIUM -> R.font.poppins_medium
         }
 
-        try {
-            typeface = ResourcesCompat.getFont(context, fontRes)
+        typeface = try {
+            ResourcesCompat.getFont(context, fontRes)
         } catch (e: Exception) {
-            typeface = ResourcesCompat.getFont(context, R.font.poppins)
+            ResourcesCompat.getFont(context, R.font.poppins)
         }
     }
 

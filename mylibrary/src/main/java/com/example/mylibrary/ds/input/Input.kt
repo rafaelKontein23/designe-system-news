@@ -16,6 +16,11 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.customview.widget.ExploreByTouchHelper
 import com.example.mylibrary.R
+import kotlin.collections.get
+import kotlin.div
+import kotlin.or
+import kotlin.text.compareTo
+import androidx.core.graphics.toColorInt
 
 /**
  * Campo de entrada customizado que estende [AppCompatEditText] com suporte a diferentes tipos de teclado,
@@ -76,6 +81,26 @@ class DsInput @JvmOverloads constructor(
         val padding = context.resources.getDimensionPixelSize(R.dimen.padding_7)
         setPadding(padding, paddingTop, padding, paddingBottom)
 
+        setTextColor(ContextCompat.getColor(context, android.R.color.black)) // #000000 100%
+        setHintTextColor(ContextCompat.getColor(context, android.R.color.black).let { color ->
+            android.graphics.Color.argb(
+                (255 * 0.7).toInt(),
+                android.graphics.Color.red(color),
+                android.graphics.Color.green(color),
+                android.graphics.Color.blue(color)
+            )
+        })
+
+        ViewCompat.setAccessibilityDelegate(this, object : androidx.core.view.AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: android.view.View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.roleDescription = "campo de edição"
+            }
+        })
+
         attrs?.let {
             val ta = context.obtainStyledAttributes(it, R.styleable.DsInput)
             val keyboardType = ta.getInt(R.styleable.DsInput_inputKeyboardType,KeyboardType.TEXT.ordinal + 1)
@@ -83,6 +108,7 @@ class DsInput @JvmOverloads constructor(
             setKeyboardTypeFromXml(keyboardType)
         }
     }
+
 
     /**
      * Define o tipo de teclado e aplica configurações correspondentes.
@@ -165,8 +191,10 @@ class DsInput @JvmOverloads constructor(
      * Configura o campo como entrada de senha com toggle de visibilidade.
      */
     private fun inputPassword() {
+        val currentTypeface = typeface
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)
+        typeface = currentTypeface
+        eyeIcon = ContextCompat.getDrawable(context, R.drawable.ds_eye_password)
         updatePasswordIcon()
 
         val paddingRight = context.resources.getDimensionPixelSize(R.dimen.margin_12)
@@ -182,8 +210,18 @@ class DsInput @JvmOverloads constructor(
         eyeIcon = null
         setCompoundDrawables(null, null, null, null)
         touchHelper = null
-        ViewCompat.setAccessibilityDelegate(this, null)
+
+        ViewCompat.setAccessibilityDelegate(this, object : androidx.core.view.AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: android.view.View,
+                info: AccessibilityNodeInfoCompat
+            ) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.roleDescription = "campo de edição"
+            }
+        })
     }
+
 
     /**
      * Configura recursos de acessibilidade para o toggle de visibilidade de senha.
@@ -210,10 +248,13 @@ class DsInput @JvmOverloads constructor(
                 if (virtualViewId != 1 || eyeIcon == null) return
 
                 val drawableEnd = compoundDrawables[2] ?: return
-                val drawableRight = right - paddingRight
-                val drawableLeft = drawableRight - drawableEnd.bounds.width()
-                val drawableTop = paddingTop
-                val drawableBottom = height - paddingBottom
+                val drawableWidth = drawableEnd.bounds.width()
+                val drawableHeight = drawableEnd.bounds.height()
+
+                val drawableRight = width - paddingRight
+                val drawableLeft = drawableRight - drawableWidth
+                val drawableTop = (height - drawableHeight) / 2
+                val drawableBottom = drawableTop + drawableHeight
 
                 val actionLabel = if (isVisiblePassword) {
                     context.getString(R.string.hide_password)
@@ -227,6 +268,7 @@ class DsInput @JvmOverloads constructor(
                 node.setBoundsInParent(Rect(drawableLeft, drawableTop, drawableRight, drawableBottom))
                 node.className = ImageButton::class.java.name
             }
+
 
             override fun onPerformActionForVirtualView(
                 virtualViewId: Int,
@@ -244,6 +286,11 @@ class DsInput @JvmOverloads constructor(
                 }
                 return false
             }
+
+            override fun onInitializeAccessibilityNodeInfo(host: android.view.View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.roleDescription = "campo de edição"
+            }
         }
 
         ViewCompat.setAccessibilityDelegate(this, touchHelper)
@@ -256,11 +303,13 @@ class DsInput @JvmOverloads constructor(
         eyeIcon?.let {
             val size = context.resources.getDimensionPixelSize(R.dimen.size_24)
             it.setBounds(0, 0, size, size)
+            it.setTint("#707070".toColorInt())
         }
         compoundDrawablePadding = context.resources.getDimensionPixelSize(R.dimen.margin_12)
         setCompoundDrawables(null, null, eyeIcon, null)
         touchHelper?.invalidateVirtualView(1)
     }
+
 
     /**
      * Intercepta eventos de toque para detectar clique no ícone de visibilidade de senha.
@@ -269,15 +318,43 @@ class DsInput @JvmOverloads constructor(
      * @return true se o evento foi consumido, false caso contrário
      */
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
+
+        if (accessibilityManager.isTouchExplorationEnabled) {
+            return super.onTouchEvent(event)
+        }
+
         if (eyeIcon != null && event.action == MotionEvent.ACTION_UP) {
             val drawableEnd = compoundDrawables[2]
-            if (drawableEnd != null && event.rawX >= (right - drawableEnd.bounds.width() - paddingRight)) {
-                togglePasswordVisibility()
-                return true
+            if (drawableEnd != null) {
+                val drawableRight = right - paddingRight
+                val drawableLeft = drawableRight - drawableEnd.bounds.width()
+                if (event.x >= drawableLeft && event.x <= drawableRight) {
+                    performClick()
+                    togglePasswordVisibility()
+                    return true
+                }
             }
         }
         return super.onTouchEvent(event)
     }
+
+    override fun dispatchHoverEvent(event: MotionEvent): Boolean {
+        touchHelper?.let {
+            if (it.dispatchHoverEvent(event)) {
+                return true
+            }
+        }
+        return super.dispatchHoverEvent(event)
+    }
+
+
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
+    }
+
 
     /**
      * Aplica uma máscara de formatação à entrada de texto.
@@ -348,14 +425,17 @@ class DsInput @JvmOverloads constructor(
     private fun togglePasswordVisibility() {
         isVisiblePassword = !isVisiblePassword
 
+        val currentTypeface = typeface
+
         if (isVisiblePassword) {
             inputType = InputType.TYPE_CLASS_TEXT
-            eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_off_24)
+            eyeIcon = ContextCompat.getDrawable(context, R.drawable.ds_eye_password_cutted)
         } else {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            eyeIcon = ContextCompat.getDrawable(context, R.drawable.baseline_visibility_24)
+            eyeIcon = ContextCompat.getDrawable(context, R.drawable.ds_eye_password)
         }
 
+        typeface = currentTypeface
         updatePasswordIcon()
         setSelection(text?.length ?: 0)
     }

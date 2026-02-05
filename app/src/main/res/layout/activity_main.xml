@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
+        tools:context=".MainActivity">
 
         <com.example.mylibrary.ds.toolbar.DsToolbar
             android:id="@+id/toolbar"
@@ -27,13 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Meu Titulo"
-            app:dsTextStyle="description"
-            />
+            app:dsTextStyle="description" />
+
         <com.example.mylibrary.ds.button.DsButton
             android:id="@+id/btn1"
-            android:layout_margin="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="12dp"
             android:text="Primary Button"
             app:backgroundColorDS="@color/black"
             app:buttonType="primary" />
@@ -42,77 +38,89 @@
             android:id="@+id/btn2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:textDS="Secondary Button"
-            app:buttonType="secondary" />
+            app:buttonType="secondary"
+            app:textDS="Secondary Button" />
 
         <com.example.mylibrary.ds.button.DsButton
             android:id="@+id/btn3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:textDS="Outlined Button"
-            app:buttonType="outlined" />
+            app:buttonType="outlined"
+            app:textDS="Outlined Button" />
 
         <com.example.mylibrary.ds.button.DsButton
             android:id="@+id/btn4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:textDS="Text Button"
-            app:buttonType="text" />
+            app:buttonType="text"
+            app:textDS="Text Button" />
 
         <com.example.mylibrary.ds.button.DsButton
             android:id="@+id/btn5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:textDS="Danger Button"
-            app:buttonType="danger" />
+            app:buttonType="danger"
+            app:textDS="Danger Button" />
+
+
+        <com.example.mylibrary.ds.card.notification.DsNotificationCard
+            android:id="@+id/dscard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isNew="true"
+            app:notificationDateTime="10/02/2026 às 14:30"
+            app:notificationTitle="Teste de Mensagem Longa Lorem Ipsum 1234ds fjndsfjdsnfidsfidsnfdsifndsifndsf" />
+
+        <com.example.mylibrary.ds.chip.DsChip
+            android:id="@+id/chip_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            app:chipBackgroundColorDS="@android:color/holo_blue_dark"
+            app:chipText="NOVO"
+            app:chipTextColorDS="@android:color/white" />
+
+        <com.example.mylibrary.ds.input.DsInput
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:inputKeyboardType="email"
+            android:layout_margin="@dimen/margin_12"
+            android:hint="digite seu email" />
+
+        <com.example.mylibrary.ds.input.DsInput
+            android:id="@+id/textz"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_margin="@dimen/margin_12"
+            android:hint="digite sua senha"
+            app:inputKeyboardType="password" />
+
+        <com.example.mylibrary.ds.input.DsInput
+            android:id="@+id/text3"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:inputKeyboardType="date"
+            android:layout_margin="@dimen/margin_12"
+            android:hint="digite uma data" />
+
+        <com.example.mylibrary.ds.input.DsInput
+            android:id="@+id/text4"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:inputKeyboardType="cpf"
+            android:layout_margin="@dimen/margin_12"
+            android:hint="digite seu cpf" />
+
+        <com.example.mylibrary.ds.input.DsInput
+            android:id="@+id/text5"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:inputKeyboardType="phone"
+            android:layout_margin="@dimen/margin_12"
+            android:hint="digite seu telefone" />
 
     </LinearLayout>
 
-    <com.example.mylibrary.ds.input.DsInput
-        android:id="@+id/text"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:hint="djkbsakbsajk"
-        android:layout_margin="@dimen/margin_12"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <com.example.mylibrary.ds.input.DsInput
-        android:id="@+id/textz"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        app:inputKeyboardType="password"
-        android:hint="djkbsakbsajk"
-        android:layout_margin="@dimen/margin_12"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <com.example.mylibrary.ds.card.notification.DsNotificationCard
-        android:id="@+id/dscard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:notificationTitle="Teste de Mensagem Longa Lorem Ipsum 1234ds fjndsfjdsnfidsfidsnfdsifndsifndsf"
-        app:notificationDateTime="10/02/2026 às 14:30"
-        app:isNew="true"
-        app:layout_constraintTop_toBottomOf="@id/textz"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <com.example.mylibrary.ds.chip.DsChip
-        android:id="@+id/chip_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:chipBackgroundColorDS="@android:color/holo_blue_dark"
-        app:chipText="NOVO"
-        app:chipTextColorDS="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dscard" />
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

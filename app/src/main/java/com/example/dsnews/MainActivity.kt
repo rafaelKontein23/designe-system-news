@@ -1,74 +1,78 @@
 package com.example.dsnews
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.mylibrary.ds.button.DsButton
-import com.example.mylibrary.ds.input.DsInput
+import com.example.dsnews.databinding.ActivityMainBinding
+import com.example.mylibrary.ds.text.DsText
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var input: DsInput
-    private lateinit var input2: DsInput
-    private lateinit var btn1: DsButton
-    private lateinit var btn2: DsButton
-    private lateinit var btn3: DsButton
-    private lateinit var btn4: DsButton
-    private lateinit var btn5: DsButton
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        input = findViewById(R.id.text)
-        input2 = findViewById(R.id.textz)
-        btn1 = findViewById(R.id.btn1)
-        btn2 = findViewById(R.id.btn2)
-        btn3 = findViewById(R.id.btn3)
-        btn4 = findViewById(R.id.btn4)
-        btn5 = findViewById(R.id.btn5)
-
+        setupToolbar()
         setupButtonListeners()
+        setupTitle()
 
-        btn1.apply {
-            setDsBackgroundColorResource(R.color.black)
-        }
+        binding.btn1.setDsBackgroundColorResource(R.color.black)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
     }
 
+    private fun setupToolbar() {
+        binding.toolbar.apply {
+            setToolbarTitle("Meu App", DsText.TextStyle.DESCRIPTION)
+            setBackButton(show = true) {
+                finish()
+            }
+        }
+    }
+
+    private fun setupTitle() {
+        binding.titulo.setColoredText(
+            "Ainda não tem conta? " to Color.GRAY,
+            "Cadastrar" to Color.BLUE
+        )
+    }
+
     private fun setupButtonListeners() {
-        btn1.setDsClickListener {
-            input.setText("Botão Primary clicado!")
-            input.error = "Botão Primary clicado!"
-            input2.error = "Botão Primary clicado!"
+        binding.btn1.setDsClickListener {
+            binding.text.setText("Botão Primary clicado!")
+            binding.text.error = "Botão Primary clicado!"
+            binding.textz.error = "Botão Primary clicado!"
             Toast.makeText(this, "Primary Button", Toast.LENGTH_SHORT).show()
         }
 
-        btn2.setDsClickListener {
-            input.setText("Botão Secondary clicado!")
+        binding.btn2.setDsClickListener {
+            binding.text.setText("Botão Secondary clicado!")
             Toast.makeText(this, "Secondary Button", Toast.LENGTH_SHORT).show()
         }
 
-        btn3.setDsClickListener {
-            input.setText("Botão Outlined clicado!")
+        binding.btn3.setDsClickListener {
+            binding.text.setText("Botão Outlined clicado!")
             Toast.makeText(this, "Outlined Button", Toast.LENGTH_SHORT).show()
         }
 
-        btn4.setDsClickListener {
-            input.setText("Botão Text clicado!")
+        binding.btn4.setDsClickListener {
+            binding.text.setText("Botão Text clicado!")
             Toast.makeText(this, "Text Button", Toast.LENGTH_SHORT).show()
         }
 
-        btn5.setDsClickListener {
-            input.setText("Botão Danger clicado!")
+        binding.btn5.setDsClickListener {
+            binding.text.setText("Botão Danger clicado!")
             Toast.makeText(this, "Danger Button", Toast.LENGTH_SHORT).show()
         }
     }

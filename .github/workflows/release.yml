@@ -1,0 +1,86 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          # Busca a última tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+          # Remove o 'v' e separa os números
+          VERSION=${LATEST_TAG#v}
+          IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+
+          # Incrementa o patch version
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
+          NEW_PATCH=$((PATCH + 1))
+
+          NEW_TAG="v$MAJOR.$MINOR.$NEW_PATCH"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Get commit/merge message
+        id: commit_info
+        run: |
+          # Pega a mensagem do último commit
+          COMMIT_MSG=$(git log -1 --pretty=format:"%s")
+          echo "commit_message=$COMMIT_MSG" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          PREV_TAG="${{ steps.get_tag.outputs.latest_tag }}"
+
+          # Gera release notes baseado nos commits
+          NOTES=$(git log $PREV_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
+
+          if [ -z "$NOTES" ]; then
+            NOTES="- Melhorias e correções gerais"
+          fi
+
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.get_tag.outputs.new_tag }}
+          git push origin ${{ steps.get_tag.outputs.new_tag }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_tag.outputs.new_tag }}
+          release_name: "${{ steps.get_tag.outputs.new_tag }} - ${{ steps.commit_info.outputs.commit_message }}"
+          body: |
+            ## 🚀 O que há de novo
+
+            ${{ steps.release_notes.outputs.notes }}
+
+            **Versão anterior:** ${{ steps.get_tag.outputs.latest_tag }}
+            **Nova versão:** ${{ steps.get_tag.outputs.new_tag }}
+          draft: false
+          prerelease: false

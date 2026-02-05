@@ -8,6 +8,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.mylibrary.R
 import com.example.mylibrary.databinding.DsNotificationCardBinding
 
+/**
+ * Card de notificação customizado que exibe título, data/hora e um chip opcional para indicar novas notificações.
+ *
+ * Este componente estende [ConstraintLayout] e oferece métodos para configurar o conteúdo
+ * e a aparência visual do card de notificação.
+ *
+ * @param context O contexto da aplicação
+ * @param attrs Os atributos XML do componente
+ * @param defStyleAttr O estilo padrão aplicado ao componente
+ */
 class DsNotificationCard @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -37,26 +47,56 @@ class DsNotificationCard @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Define o título da notificação.
+     *
+     * @param title O texto do título a ser exibido
+     */
     fun setTitle(title: String) {
         binding.dsNotificationTitle.text = title
     }
 
+    /**
+     * Define a data e hora da notificação.
+     *
+     * @param dateTime O texto da data/hora a ser exibido
+     */
     fun setDateTime(dateTime: String) {
         binding.dsNotificationDatetime.text = dateTime
     }
 
+    /**
+     * Define se a notificação é nova, controlando a visibilidade do chip.
+     *
+     * @param isNew true para exibir o chip de nova notificação, false para ocultá-lo
+     */
     fun setIsNew(isNew: Boolean) {
         binding.dsNotificationChip.visibility = if (isNew) View.VISIBLE else View.GONE
     }
 
+    /**
+     * Define o texto exibido no chip de notificação.
+     *
+     * @param text O texto a ser exibido no chip
+     */
     fun setChipText(text: String) {
         binding.dsNotificationChip.setDsText(text)
     }
 
+    /**
+     * Define a cor de fundo do chip de notificação.
+     *
+     * @param color O recurso de cor a ser aplicado ao fundo do chip
+     */
     fun setChipBackgroundColor(color: Int) {
         binding.dsNotificationChip.setDsBackgroundColor(color)
     }
 
+    /**
+     * Define a cor do texto do chip de notificação.
+     *
+     * @param color O recurso de cor a ser aplicado ao texto do chip
+     */
     fun setChipTextColor(color: Int) {
         binding.dsNotificationChip.setDsTextColor(color)
     }

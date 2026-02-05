@@ -19,4 +19,14 @@
         <item name="android:textColor">@color/black_150</item>
         <item name="android:paddingStart">@dimen/padding_4</item>
     </style>
+
+    <style name="TextAppearance.Toolbar.Title.Header" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">24sp</item>
+        <item name="fontFamily">@font/poppins_bold</item>
+    </style>
+
+    <style name="TextAppearance.Toolbar.Title.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+    </style>
 </resources>

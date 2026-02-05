@@ -42,6 +42,21 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="DsText">
+        <attr name="dsFontWeight" format="enum">
+            <enum name="regular" value="0" />
+            <enum name="semiBold" value="1" />
+            <enum name="bold" value="2" />
+            <enum name="medium" value="3" />
+        </attr>
+        <attr name="dsTextStyle" format="enum">
+            <enum name="header" value="0" />
+            <enum name="subtitle" value="1" />
+            <enum name="description" value="2" />
+            <enum name="text" value="3" />
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="DsChip">
         <attr name="chipText" format="string" />
         <attr name="chipBackgroundColorDS" format="color|reference" />

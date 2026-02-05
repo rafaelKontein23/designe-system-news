@@ -8,17 +8,35 @@ import androidx.core.content.ContextCompat
 import com.example.mylibrary.R
 import com.google.android.material.button.MaterialButton
 
+/**
+ * Componente de botão customizado que estende [MaterialButton] com suporte a diferentes tipos visuais.
+ *
+ * Este componente oferece estilos pré-definidos (primário, secundário, outlined, texto e danger)
+ * e permite personalização de cores, texto e ícones através de XML ou programaticamente.
+ *
+ * @param context O contexto da aplicação
+ * @param attrs Os atributos XML do componente
+ * @param defStyleAttr O estilo padrão aplicado ao componente
+ */
 class DsButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = com.google.android.material.R.attr.materialButtonStyle
 ) : MaterialButton(context, attrs, defStyleAttr) {
 
+    /**
+     * Tipos de botão disponíveis com estilos visuais pré-definidos.
+     */
     enum class ButtonType {
+        /** Botão primário com fundo azul e texto branco */
         PRIMARY,
+        /** Botão secundário com fundo cinza e texto branco */
         SECONDARY,
+        /** Botão com borda azul, fundo transparente e texto azul */
         OUTLINED,
+        /** Botão sem fundo com texto azul */
         TEXT,
+        /** Botão de perigo com fundo vermelho e texto branco */
         DANGER
     }
 
@@ -58,11 +76,21 @@ class DsButton @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Define o tipo visual do botão.
+     *
+     * @param type O tipo de botão a ser aplicado
+     */
     fun setButtonType(type: ButtonType) {
         currentType = type
         applyButtonType(type)
     }
 
+    /**
+     * Aplica as configurações visuais correspondentes ao tipo de botão.
+     *
+     * @param type O tipo de botão cujas configurações serão aplicadas
+     */
     private fun applyButtonType(type: ButtonType) {
         when (type) {
             ButtonType.PRIMARY -> {
@@ -95,19 +123,38 @@ class DsButton @JvmOverloads constructor(
         }
     }
 
-
+    /**
+     * Define a cor de fundo do botão usando um valor de cor.
+     *
+     * @param color A cor a ser aplicada ao fundo do botão
+     */
     fun setDsBackgroundColor(@ColorInt color: Int) {
         backgroundTintList = android.content.res.ColorStateList.valueOf(color)
     }
 
+    /**
+     * Define a cor de fundo do botão usando um recurso de cor.
+     *
+     * @param colorRes O recurso de cor a ser aplicado ao fundo do botão
+     */
     fun setDsBackgroundColorResource(@ColorRes colorRes: Int) {
         backgroundTintList = ContextCompat.getColorStateList(context, colorRes)
     }
 
+    /**
+     * Define o texto exibido no botão.
+     *
+     * @param text O texto a ser exibido
+     */
     fun setDsText(text: String) {
         this.text = text
     }
 
+    /**
+     * Define um listener de clique para o botão.
+     *
+     * @param clickListener A função a ser executada quando o botão for clicado
+     */
     fun setDsClickListener(clickListener: () -> Unit) {
         setOnClickListener { clickListener() }
     }

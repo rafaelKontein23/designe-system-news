@@ -16,6 +16,10 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.customview.widget.ExploreByTouchHelper
 import com.example.mylibrary.R
+import kotlin.collections.get
+import kotlin.div
+import kotlin.or
+import kotlin.text.compareTo
 import androidx.core.graphics.toColorInt
 
 /**
@@ -326,7 +330,6 @@ class DsInput @JvmOverloads constructor(
                 val drawableWidth = drawableEnd.bounds.width()
                 val drawableRight = width - paddingRight
                 val drawableLeft = drawableRight - drawableWidth
-
                 if (event.x >= drawableLeft && event.x <= drawableRight) {
                     performClick()
                     togglePasswordVisibility()

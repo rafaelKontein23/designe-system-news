@@ -28,9 +28,6 @@ class DsNotificationCard @JvmOverloads constructor(
         DsNotificationCardBinding.inflate(LayoutInflater.from(context), this, true)
 
     init {
-
-        isClickable = true
-        isFocusable = true
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
 
         val a = context.obtainStyledAttributes(attrs, R.styleable.DsNotificationCard)

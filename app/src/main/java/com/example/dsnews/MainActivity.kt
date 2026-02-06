@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btn1.setDsBackgroundColorResource(R.color.black)
 
+        binding.dscard.setOnClickListener {
+            Toast.makeText(this, "Card clicado", Toast.LENGTH_SHORT).show()
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

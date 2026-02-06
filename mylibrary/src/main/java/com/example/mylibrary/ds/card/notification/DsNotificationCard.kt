@@ -7,6 +7,7 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.mylibrary.R
 import com.example.mylibrary.databinding.DsNotificationCardBinding
+import androidx.core.view.isVisible
 
 /**
  * Card de notificação customizado que exibe título, data/hora e um chip opcional para indicar novas notificações.
@@ -51,6 +52,7 @@ class DsNotificationCard @JvmOverloads constructor(
      */
     fun setTitle(title: String) {
         binding.dsNotificationTitle.text = title
+        updateContentDescription()
     }
 
     /**
@@ -60,6 +62,7 @@ class DsNotificationCard @JvmOverloads constructor(
      */
     fun setDateTime(dateTime: String) {
         binding.dsNotificationDatetime.text = dateTime
+        updateContentDescription()
     }
 
     /**
@@ -69,6 +72,7 @@ class DsNotificationCard @JvmOverloads constructor(
      */
     fun setIsNew(isNew: Boolean) {
         binding.dsNotificationChip.visibility = if (isNew) View.VISIBLE else View.GONE
+        updateContentDescription()
     }
 
     /**
@@ -97,4 +101,27 @@ class DsNotificationCard @JvmOverloads constructor(
     fun setChipTextColor(color: Int) {
         binding.dsNotificationChip.setDsTextColor(color)
     }
+
+    /**
+     * Atualiza a descrição de acessibilidade do card para leitores de tela.
+     */
+    private fun updateContentDescription() {
+        val title = binding.dsNotificationTitle.text.toString()
+        val dateTime = binding.dsNotificationDatetime.text.toString()
+        val isNew = binding.dsNotificationChip.isVisible
+
+        val description = buildString {
+            if (isNew) {
+                append("Nova notificação. ")
+            }
+            append(title)
+            if (dateTime.isNotEmpty()) {
+                append(". ")
+                append(dateTime)
+            }
+        }
+
+        contentDescription = description
+    }
+
 }

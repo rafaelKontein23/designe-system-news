@@ -123,16 +123,20 @@ class DsToolbar @JvmOverloads constructor(
         action1Icon: Int? = null,
         action1Click: (() -> Unit)? = null,
         action1BadgeCount: Int = 0,
+        action1Content: String = "Botão",
+        action1BadgeDescription: String = "notificações",
         action2Icon: Int? = null,
         action2Click: (() -> Unit)? = null,
-        action2BadgeCount: Int = 0
+        action2BadgeCount: Int = 0,
+        action2Content: String = "Botão",
+        action2BadgeDescription: String = "notificações",
     ) {
         menu.clear()
 
         action1Icon?.let { icon ->
             val menuItem1 = menu.add(Menu.NONE, 1, Menu.NONE, "")
             menuItem1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            menuItem1.actionView = createActionView(icon, action1BadgeCount)
+            menuItem1.actionView = createActionView(icon, action1BadgeCount, action1Content,action1BadgeDescription)
             menuItem1.actionView?.setOnClickListener { action1Click?.invoke() }
             onAction1ClickListener = action1Click
         }
@@ -140,13 +144,13 @@ class DsToolbar @JvmOverloads constructor(
         action2Icon?.let { icon ->
             val menuItem2 = menu.add(Menu.NONE, 2, Menu.NONE, "")
             menuItem2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            menuItem2.actionView = createActionView(icon, action2BadgeCount)
+            menuItem2.actionView = createActionView(icon, action2BadgeCount, action2Content,action2BadgeDescription)
             menuItem2.actionView?.setOnClickListener { action2Click?.invoke() }
             onAction2ClickListener = action2Click
         }
     }
 
-    private fun createActionView(iconRes: Int, badgeCount: Int): android.view.View {
+    private fun createActionView(iconRes: Int, badgeCount: Int, contentDesc: String, badgeDesc: String = "notificações"): android.view.View {
         val view = android.view.LayoutInflater.from(context)
             .inflate(R.layout.toolbar_action_with_badge, null)
 
@@ -155,15 +159,28 @@ class DsToolbar @JvmOverloads constructor(
 
         iconView.setImageResource(iconRes)
 
+        val description = buildString {
+            append(contentDesc)
+            if (badgeCount > 0) {
+                append(". ")
+                append(badgeCount)
+                append(" $badgeDesc")
+            }
+        }
+
+        view.contentDescription = description
+
         if (badgeCount > 0) {
             badgeView.visibility = android.view.View.VISIBLE
             badgeView.text = if (badgeCount > 99) "99+" else badgeCount.toString()
+            badgeView.importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
         } else {
             badgeView.visibility = android.view.View.GONE
         }
 
         return view
     }
+
 
     private fun scaleDrawable(drawable: Drawable?, widthDp: Int, heightDp: Int): Drawable? {
         drawable ?: return null

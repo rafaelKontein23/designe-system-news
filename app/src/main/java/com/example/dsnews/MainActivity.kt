@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
             setActionButtons(
                 action1Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
+                action1BadgeCount = 2,
                 action1Click = {
                     Toast.makeText(this@MainActivity, "Buscar", Toast.LENGTH_SHORT).show()
                 },

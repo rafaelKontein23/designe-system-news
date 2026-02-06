@@ -122,36 +122,47 @@ class DsToolbar @JvmOverloads constructor(
     fun setActionButtons(
         action1Icon: Int? = null,
         action1Click: (() -> Unit)? = null,
+        action1BadgeCount: Int = 0,
         action2Icon: Int? = null,
-        action2Click: (() -> Unit)? = null
+        action2Click: (() -> Unit)? = null,
+        action2BadgeCount: Int = 0
     ) {
         menu.clear()
 
         action1Icon?.let { icon ->
-            val drawable = ContextCompat.getDrawable(context, icon)
-            val scaledDrawable = scaleDrawable(drawable, 24, 24)
             val menuItem1 = menu.add(Menu.NONE, 1, Menu.NONE, "")
-            menuItem1.icon = scaledDrawable
             menuItem1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            menuItem1.actionView = createActionView(icon, action1BadgeCount)
+            menuItem1.actionView?.setOnClickListener { action1Click?.invoke() }
             onAction1ClickListener = action1Click
         }
 
         action2Icon?.let { icon ->
-            val drawable = ContextCompat.getDrawable(context, icon)
-            val scaledDrawable = scaleDrawable(drawable, 24, 24)
             val menuItem2 = menu.add(Menu.NONE, 2, Menu.NONE, "")
-            menuItem2.icon = scaledDrawable
             menuItem2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            menuItem2.actionView = createActionView(icon, action2BadgeCount)
+            menuItem2.actionView?.setOnClickListener { action2Click?.invoke() }
             onAction2ClickListener = action2Click
         }
+    }
 
-        setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                1 -> onAction1ClickListener?.invoke()
-                2 -> onAction2ClickListener?.invoke()
-            }
-            true
+    private fun createActionView(iconRes: Int, badgeCount: Int): android.view.View {
+        val view = android.view.LayoutInflater.from(context)
+            .inflate(R.layout.toolbar_action_with_badge, null)
+
+        val iconView = view.findViewById<android.widget.ImageView>(R.id.action_icon)
+        val badgeView = view.findViewById<android.widget.TextView>(R.id.badge)
+
+        iconView.setImageResource(iconRes)
+
+        if (badgeCount > 0) {
+            badgeView.visibility = android.view.View.VISIBLE
+            badgeView.text = if (badgeCount > 99) "99+" else badgeCount.toString()
+        } else {
+            badgeView.visibility = android.view.View.GONE
         }
+
+        return view
     }
 
     private fun scaleDrawable(drawable: Drawable?, widthDp: Int, heightDp: Int): Drawable? {

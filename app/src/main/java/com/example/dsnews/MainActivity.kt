@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.btn1.setDsBackgroundColorResource(R.color.black)
 
+        binding.dscard.setOnClickListener {
+            Toast.makeText(this, "Card clicado", Toast.LENGTH_SHORT).show()
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -42,6 +46,8 @@ class MainActivity : AppCompatActivity() {
             setActionButtons(
                 action1Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
                 action1BadgeCount = 2,
+                action1Content = "Notificações",
+                action1BadgeDescription = "testes",
                 action1Click = {
                     Toast.makeText(this@MainActivity, "Buscar", Toast.LENGTH_SHORT).show()
                 },

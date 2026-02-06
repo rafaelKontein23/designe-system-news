@@ -327,8 +327,9 @@ class DsInput @JvmOverloads constructor(
         if (eyeIcon != null && event.action == MotionEvent.ACTION_UP) {
             val drawableEnd = compoundDrawables[2]
             if (drawableEnd != null) {
-                val drawableRight = right - paddingRight
-                val drawableLeft = drawableRight - drawableEnd.bounds.width()
+                val drawableWidth = drawableEnd.bounds.width()
+                val drawableRight = width - paddingRight
+                val drawableLeft = drawableRight - drawableWidth
                 if (event.x >= drawableLeft && event.x <= drawableRight) {
                     performClick()
                     togglePasswordVisibility()

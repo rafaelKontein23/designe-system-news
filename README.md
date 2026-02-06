@@ -82,6 +82,24 @@ chip
         app:chipBackgroundColorDS="@android:color/holo_blue_dark"
         app:chipTextColorDS="@android:color/white" />
 
+---
+Toolbar
+
+        <com.example.mylibrary.ds.toolbar.DsToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+---
+Text
+
+        <com.example.mylibrary.ds.text.DsText
+            android:id="@+id/titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Meu Titulo"
+            app:dsTextStyle="description"
+            />
 
 ## Links úteis
 

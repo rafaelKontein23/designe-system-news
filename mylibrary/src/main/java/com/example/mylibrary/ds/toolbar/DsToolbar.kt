@@ -19,6 +19,7 @@ class DsToolbar @JvmOverloads constructor(
 ) : MaterialToolbar(context, attrs, defStyleAttr) {
 
     private var onBackClickListener: (() -> Unit)? = null
+    private var onMenuClickListener: (() -> Unit)? = null
     private var onAction1ClickListener: (() -> Unit)? = null
     private var onAction2ClickListener: (() -> Unit)? = null
 
@@ -47,9 +48,6 @@ class DsToolbar @JvmOverloads constructor(
 
     /**
      * Define o título da toolbar com estilo personalizado
-     * @param titleText Texto do título
-     * @param textStyle Estilo do texto (HEADER ou SUBTITLE)
-     * @param centered Se true, centraliza o título
      */
     fun setToolbarTitle(
         titleText: String,
@@ -89,18 +87,69 @@ class DsToolbar @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Configura o menu hamburguer na esquerda.
+     * @param onClick Ação ao clicar no ícone do menu
+     */
+    fun setHamburgerMenu(onClick: () -> Unit) {
+        updatePadding(left = 0)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_menu)
+        navigationIcon = scaleDrawable(drawable, 24, 24)
+        onMenuClickListener = onClick
+        setNavigationOnClickListener {
+            onMenuClickListener?.invoke()
+        }
+    }
+
+    /**
+     * Configura o menu popup que abre ao clicar no hambúrguer à esquerda
+     * @param menuRes ID do recurso de menu (ex: R.menu.toolbar_menu)
+     * @param onMenuItemClick Callback para tratar cliques nos itens
+     */
+    fun setOptionsMenu(menuRes: Int, onMenuItemClick: (MenuItem) -> Boolean) {
+        // Adiciona o ícone hambúrguer à esquerda
+        updatePadding(left = 0)
+        val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_menu)
+        navigationIcon = scaleDrawable(drawable, 24, 24)
+
+        setNavigationOnClickListener { view ->
+            val popup = androidx.appcompat.widget.PopupMenu(context, view)
+            popup.menuInflater.inflate(menuRes, popup.menu)
+
+            try {
+                val fieldPopup = popup.javaClass.getDeclaredField("mPopup")
+                fieldPopup.isAccessible = true
+                val mPopup = fieldPopup.get(popup)
+
+                mPopup.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(mPopup, true)
+
+                // Habilita divisores entre
+                val menuPopup = mPopup.javaClass
+                val setGroupDividerEnabledMethod = menuPopup.getDeclaredMethod("setGroupDividerEnabled", Boolean::class.java)
+                setGroupDividerEnabledMethod.invoke(mPopup, true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            // Define o listener de cliques nos itens
+            popup.setOnMenuItemClickListener { menuItem ->
+                onMenuItemClick(menuItem)
+            }
+
+            popup.show()
+        }
+    }
 
     /**
      * Configura o botão de voltar com ícone de 24x24
-     * @param show Se true, exibe o botão de voltar
-     * @param onClick Ação ao clicar no botão
      */
     fun setBackButton(show: Boolean, onClick: (() -> Unit)? = null) {
         if (show) {
             updatePadding(left = 0)
             val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_chevron_back)
-            val scaledDrawable = scaleDrawable(drawable, 24, 24)
-            navigationIcon = scaledDrawable
+            navigationIcon = scaleDrawable(drawable, 24, 24)
             onBackClickListener = onClick
             setNavigationOnClickListener {
                 onBackClickListener?.invoke()
@@ -113,11 +162,7 @@ class DsToolbar @JvmOverloads constructor(
     }
 
     /**
-     * Adiciona botões de ação na direita com ícones de 24x24
-     * @param action1Icon Ícone do primeiro botão (null para não exibir)
-     * @param action1Click Ação do primeiro botão
-     * @param action2Icon Ícone do segundo botão (null para não exibir)
-     * @param action2Click Ação do segundo botão
+     * Adiciona botões de ação na direita
      */
     fun setActionButtons(
         action1Icon: Int? = null,
@@ -136,7 +181,7 @@ class DsToolbar @JvmOverloads constructor(
         action1Icon?.let { icon ->
             val menuItem1 = menu.add(Menu.NONE, 1, Menu.NONE, "")
             menuItem1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            menuItem1.actionView = createActionView(icon, action1BadgeCount, action1Content,action1BadgeDescription)
+            menuItem1.actionView = createActionView(icon, action1BadgeCount, action1Content, action1BadgeDescription)
             menuItem1.actionView?.setOnClickListener { action1Click?.invoke() }
             onAction1ClickListener = action1Click
         }
@@ -144,13 +189,13 @@ class DsToolbar @JvmOverloads constructor(
         action2Icon?.let { icon ->
             val menuItem2 = menu.add(Menu.NONE, 2, Menu.NONE, "")
             menuItem2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            menuItem2.actionView = createActionView(icon, action2BadgeCount, action2Content,action2BadgeDescription)
+            menuItem2.actionView = createActionView(icon, action2BadgeCount, action2Content, action2BadgeDescription)
             menuItem2.actionView?.setOnClickListener { action2Click?.invoke() }
             onAction2ClickListener = action2Click
         }
     }
 
-    private fun createActionView(iconRes: Int, badgeCount: Int, contentDesc: String, badgeDesc: String = "notificações"): android.view.View {
+    private fun createActionView(iconRes: Int, badgeCount: Int, contentDesc: String, badgeDesc: String): android.view.View {
         val view = android.view.LayoutInflater.from(context)
             .inflate(R.layout.toolbar_action_with_badge, null)
 
@@ -181,14 +226,11 @@ class DsToolbar @JvmOverloads constructor(
         return view
     }
 
-
     private fun scaleDrawable(drawable: Drawable?, widthDp: Int, heightDp: Int): Drawable? {
         drawable ?: return null
-
         val density = resources.displayMetrics.density
         val widthPx = (widthDp * density).toInt()
         val heightPx = (heightDp * density).toInt()
-
         drawable.setBounds(0, 0, widthPx, heightPx)
         return drawable
     }

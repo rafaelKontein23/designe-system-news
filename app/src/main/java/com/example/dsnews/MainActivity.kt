@@ -37,25 +37,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        // Toolbar com dois botões laterais
+        // Toolbar com menu de opções (três pontos)
         binding.toolbarTwoActions.apply {
-            setToolbarTitle("Título com 2 ações", DsText.TextStyle.DESCRIPTION)
-            setBackButton(show = true) {
-                finish()
-            }
-            setActionButtons(
-                action1Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
-                action1BadgeCount = 2,
-                action1Content = "Notificações",
-                action1BadgeDescription = "testes",
-                action1Click = {
-                    Toast.makeText(this@MainActivity, "Buscar", Toast.LENGTH_SHORT).show()
-                },
-                action2Icon = com.example.mylibrary.R.drawable.ds_icon_notification,
-                action2Click = {
-                    Toast.makeText(this@MainActivity, "Mais opções", Toast.LENGTH_SHORT).show()
+            setToolbarTitle("Notícias", DsText.TextStyle.HEADER)
+
+            // Configura o menu de opções (overflow menu)
+            setOptionsMenu(com.example.mylibrary.R.menu.ds_toolbar_menu) { menuItem ->
+                when (menuItem.itemId) {
+                    com.example.mylibrary.R.id.menu_favorites -> {
+                        Toast.makeText(this@MainActivity, "Favoritos", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    com.example.mylibrary.R.id.menu_notifications -> {
+                        Toast.makeText(this@MainActivity, "Notificações", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    com.example.mylibrary.R.id.menu_logout -> {
+                        Toast.makeText(this@MainActivity, "Saindo...", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    else -> false
                 }
-            )
+            }
         }
 
         // Toolbar sem botões laterais

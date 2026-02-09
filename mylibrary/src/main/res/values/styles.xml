@@ -29,4 +29,7 @@
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/poppins_semibold</item>
     </style>
+    <style name="ShapeAppearance.Ds.SmallComponent" parent="">
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>

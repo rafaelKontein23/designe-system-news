@@ -5,4 +5,7 @@
     <public name="ds_icon_logout" type="drawable" />
     <public name="ds_icon_notification" type="drawable" />
     <public name="ds_icon_person" type="drawable" />
+    <public name="ds_heart_fill" type="drawable" />
+    <public name="ds_heart_outlined" type="drawable" />
+    <public name="ds_icon_menu" type="drawable" />
 </resources>

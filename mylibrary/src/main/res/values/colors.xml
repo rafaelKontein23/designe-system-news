@@ -4,4 +4,7 @@
     <color name="red_100">#66FF0000</color>
     <color name="red_200">#FF0000</color>
     <color name="black_150">#000000</color>
+    <color name="news_title">#1D2939</color>
+    <color name="news_description">#475467</color>
+    <color name="news_time">#98A2B3</color>
 </resources>

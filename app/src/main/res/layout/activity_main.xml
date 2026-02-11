@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
+        android:orientation="vertical">
 
         <!-- Toolbar com dois botões laterais -->
         <com.example.mylibrary.ds.toolbar.DsToolbar
@@ -108,6 +108,24 @@
             app:notificationDateTime="02 Fev, 11:20"
             app:notificationTitle="Teste de Mensagem Velha" />
 
+        <com.example.mylibrary.ds.icon.DsIcon
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/ds_icon_filter"
+            app:badgeCount="55"
+            />
+
+        <com.example.mylibrary.ds.card.news.DsNewsCard
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:newsTitle = "Mercado financeiro reage positivamente"
+            app:newsDescription = "Investiores mostram otimismo com as novas políticas econômicas lançadas e querem dinehiro mais fácil sem o medo de perder"
+            app:newsImage="@drawable/button_radius"
+            app:newsTime="Hoje, 09:15"
+            android:layout_marginHorizontal="8dp"
+            />
+
         <com.example.mylibrary.ds.chip.DsChip
             android:id="@+id/chip_new"
             android:layout_width="wrap_content"
@@ -161,3 +179,4 @@
     </LinearLayout>
 
 </ScrollView>
+

@@ -73,4 +73,12 @@
     <declare-styleable name="DsIcon">
         <attr name="badgeCount" format="integer" />
     </declare-styleable>
+
+	<declare-styleable name="DsChipGroup">
+        <attr name="chipSpacing" format="dimension" />
+        <attr name="selectedBackgroundColor" format="color|reference" />
+        <attr name="unselectedBackgroundColor" format="color|reference" />
+        <attr name="selectedTextColor" format="color|reference" />
+        <attr name="unselectedTextColor" format="color|reference" />
+    </declare-styleable>
 </resources>

@@ -27,6 +27,7 @@ class DsChip @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val textView: TextView
+    private val rootView: ConstraintLayout
 
     /**
      * Drawable de forma usado para desenhar o fundo arredondado do chip.
@@ -38,13 +39,12 @@ class DsChip @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.ds_chip, this, true)
         textView = findViewById(R.id.ds_chip_text)
-        val root = findViewById<ConstraintLayout>(R.id.ds_chip_root)
-        root.background = shapeDrawable
+        rootView = findViewById(R.id.ds_chip_root)
+        rootView.background = shapeDrawable
 
         val defaultBg = ContextCompat.getColor(context, android.R.color.holo_blue_dark)
         val defaultTextColor = ContextCompat.getColor(context, android.R.color.white)
 
-        background = shapeDrawable
         isClickable = true
         isFocusable = true
 
@@ -99,7 +99,7 @@ class DsChip @JvmOverloads constructor(
      */
     fun setDsBackgroundColor(color: Int) {
         shapeDrawable.setColor(color)
-        invalidate()
+        rootView.invalidate()
     }
 
     /**

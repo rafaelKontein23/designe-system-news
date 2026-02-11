@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupButtonListeners()
         setupTitle()
+        setupChipGroup()
 
         binding.btn1.setDsBackgroundColorResource(R.color.black)
 
@@ -88,6 +89,46 @@ class MainActivity : AppCompatActivity() {
             "Ainda não tem conta? " to Color.GRAY,
             "Cadastrar" to Color.BLUE
         )
+    }
+
+    private fun setupChipGroup() {
+        // Lista de categorias para o ChipGroup
+        val categories = listOf(
+            "Tecnologia",
+            "Esportes",
+            "Política",
+            "Entretenimento",
+            "Negócios",
+            "Ciência",
+            "Saúde",
+            "Educação"
+        )
+
+        // Adicionar chips ao grupo
+        binding.chipGroup.addChips(categories)
+
+        // Configurar listener para eventos de seleção
+        binding.chipGroup.setOnChipSelectionListener(
+            object : com.example.mylibrary.ds.chip.DsChipGroup.OnChipSelectionListener {
+                override fun onChipSelected(
+                    chip: com.example.mylibrary.ds.chip.DsChip,
+                    position: Int,
+                    isSelected: Boolean
+                ) {
+                    if (isSelected) {
+                        val categoryName = categories[position]
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Categoria: $categoryName",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        )
+
+        // Selecionar o primeiro chip programaticamente (opcional)
+        binding.chipGroup.selectChip(0)
     }
 
     private fun setupButtonListeners() {

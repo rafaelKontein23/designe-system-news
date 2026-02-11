@@ -268,6 +268,83 @@ binding.notificationCard.apply {
 
 ---
 
+### 7. DsChipGroup
+
+Grupo de chips com layout flexível e seleção única (tipo radio button).
+
+#### Características
+- ✅ Seleção única (apenas um chip por vez)
+- ✅ Wrap automático (quebra de linha quando não cabe)
+- ✅ Espaçamento configurável
+- ✅ Cores personalizáveis para estados selecionado/não selecionado
+- ✅ Callbacks de seleção
+
+#### Uso no XML
+
+```xml
+<com.example.mylibrary.ds.chip.DsChipGroup
+    android:id="@+id/chipGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:chipSpacing="12dp"
+    app:selectedBackgroundColor="@android:color/holo_green_dark"
+    app:selectedTextColor="@android:color/white"
+    app:unselectedBackgroundColor="@android:color/darker_gray"
+    app:unselectedTextColor="@android:color/white" />
+```
+
+#### Uso programático
+
+```kotlin
+// Adicionar chips
+val categories = listOf("Tecnologia", "Esportes", "Política", "Entretenimento")
+binding.chipGroup.addChips(categories)
+
+// Configurar listener de seleção
+binding.chipGroup.setOnChipSelectionListener(
+    object : DsChipGroup.OnChipSelectionListener {
+        override fun onChipSelected(
+            chip: DsChip,
+            position: Int,
+            isSelected: Boolean
+        ) {
+            if (isSelected) {
+                val categoryName = categories[position]
+                Toast.makeText(
+                    this@MainActivity,
+                    "Categoria: $categoryName",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+)
+
+// Selecionar programaticamente
+binding.chipGroup.selectChip(0) // Seleciona o primeiro chip
+
+// Outros métodos úteis
+binding.chipGroup.clearSelection() // Limpa a seleção
+val selectedIndex = binding.chipGroup.getSelectedChipIndex() // Retorna índice selecionado
+val selectedChip = binding.chipGroup.getSelectedChip() // Retorna chip selecionado
+
+// Personalizar cores programaticamente
+binding.chipGroup.setChipColors(
+    selectedBg = Color.GREEN,
+    selectedText = Color.WHITE,
+    unselectedBg = Color.GRAY,
+    unselectedText = Color.WHITE
+)
+
+// Adicionar chips individualmente
+val chip = DsChip(context).apply {
+    setDsText("Novo Chip")
+}
+binding.chipGroup.addChip(chip)
+```
+
+---
+
 ## 🎨 Recursos de Acessibilidade
 
 Todos os componentes incluem:

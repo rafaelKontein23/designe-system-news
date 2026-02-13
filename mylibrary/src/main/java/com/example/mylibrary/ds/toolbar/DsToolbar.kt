@@ -63,6 +63,8 @@ class DsToolbar @JvmOverloads constructor(
 
             titleTextView = DsText(context).apply {
                 text = titleText
+                contentDescription = titleText
+                importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
                 setTextStyle(textStyle)
                 gravity = Gravity.CENTER
                 layoutParams = LayoutParams(
@@ -95,6 +97,7 @@ class DsToolbar @JvmOverloads constructor(
         updatePadding(left = 0)
         val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_menu)
         navigationIcon = scaleDrawable(drawable, 24, 24)
+        navigationContentDescription = "MENU"
         onMenuClickListener = onClick
         setNavigationOnClickListener {
             onMenuClickListener?.invoke()
@@ -111,6 +114,7 @@ class DsToolbar @JvmOverloads constructor(
         updatePadding(left = 0)
         val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_menu)
         navigationIcon = scaleDrawable(drawable, 24, 24)
+        navigationContentDescription = "MENU"
 
         setNavigationOnClickListener { view ->
             val popup = androidx.appcompat.widget.PopupMenu(context, view)
@@ -150,6 +154,7 @@ class DsToolbar @JvmOverloads constructor(
             updatePadding(left = 0)
             val drawable = ContextCompat.getDrawable(context, R.drawable.ds_icon_chevron_back)
             navigationIcon = scaleDrawable(drawable, 24, 24)
+            navigationContentDescription = "Voltar"
             onBackClickListener = onClick
             setNavigationOnClickListener {
                 onBackClickListener?.invoke()
@@ -157,6 +162,7 @@ class DsToolbar @JvmOverloads constructor(
         } else {
             updatePadding(left = defaultHorizontalPadding)
             navigationIcon = null
+            navigationContentDescription = null
             setNavigationOnClickListener(null)
         }
     }

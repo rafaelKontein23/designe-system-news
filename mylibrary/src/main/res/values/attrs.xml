@@ -72,5 +72,7 @@
 
     <declare-styleable name="DsIcon">
         <attr name="badgeCount" format="integer" />
+        <attr name="iconDescription" format="string" />
+        <attr name="badgeDescription" format="string" />
     </declare-styleable>
 </resources>

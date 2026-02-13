@@ -195,7 +195,7 @@ binding.inputEmail.apply {
 
 ### 3. DsText
 
-Componente de texto com estilos e pesos de fonte personalizados.
+Componente de texto com estilos e pesos de fonte personalizados e suporte completo a acessibilidade.
 
 #### Estilos disponíveis
 - `header` - 24sp, Bold
@@ -233,6 +233,30 @@ binding.textTitle.apply {
     )
 }
 ```
+
+#### Acessibilidade
+
+O **DsText** possui suporte completo ao TalkBack:
+
+```kotlin
+// Por padrão, o TalkBack lê o texto visível
+binding.titleText.text = "Bem-vindo"
+// TalkBack: "Bem-vindo"
+
+// Customizar descrição para acessibilidade
+binding.priceText.apply {
+    text = "R$ 1.234,56"
+    setAccessibilityDescription("Preço: mil duzentos e trinta e quatro reais e cinquenta e seis centavos")
+}
+// Visual: "R$ 1.234,56"
+// TalkBack: "Preço: mil duzentos e trinta e quatro reais e cinquenta e seis centavos"
+
+// Remover descrição customizada
+binding.textView.clearAccessibilityDescription()
+// TalkBack voltará a ler o texto visível
+```
+
+**Dica:** Use `setAccessibilityDescription()` quando o texto visual for abreviado ou usar símbolos que precisam ser explicados por extenso para leitores de tela.
 
 ---
 
@@ -450,12 +474,14 @@ binding.notificationCard.apply {
 
 ### 7. DsIcon
 
-Ícone customizado com suporte a badge de notificação numérico.
+Ícone customizado com suporte a badge de notificação numérico e acessibilidade completa.
 
 #### Recursos
 - ✅ Badge circular vermelho com contador
 - ✅ Suporte a "99+" para números grandes
 - ✅ Redimensionamento automático para acomodar o badge
+- ✅ **Acessibilidade completa** - Anuncia descrição do ícone e contagem de notificações
+- ✅ **Suporte ao TalkBack** - Descrições em português otimizadas
 
 #### Uso no XML
 
@@ -465,19 +491,81 @@ binding.notificationCard.apply {
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:src="@drawable/ds_icon_notification"
-    app:badgeCount="5" />
+    app:badgeCount="5"
+    app:iconDescription="Notificações"
+    app:badgeDescription="notificações não lidas" />
 ```
 
 #### Uso programático
 
 ```kotlin
+// Configuração básica com acessibilidade
 binding.iconNotification.apply {
     setIcon(ContextCompat.getDrawable(context, R.drawable.ds_icon_notification))
+    setIconDescription("Notificações") // Descrição para acessibilidade
     setBadgeCount(12) // Atualiza o contador
 }
+// TalkBack anunciará: "Notificações, 12 notificações"
+
+// Customizando a descrição do badge
+binding.iconMessage.apply {
+    setIcon(ContextCompat.getDrawable(context, R.drawable.ds_icon_message))
+    setIconDescription("Mensagens")
+    setBadgeDescription("mensagens não lidas") // Customiza descrição do badge
+    setBadgeCount(3)
+}
+// TalkBack anunciará: "Mensagens, 3 mensagens não lidas"
+
+// Badge com descrição customizada para itens
+binding.iconCart.apply {
+    setIcon(ContextCompat.getDrawable(context, R.drawable.ds_icon_cart))
+    setIconDescription("Carrinho")
+    setBadgeDescription("itens no carrinho")
+    setBadgeCount(1)
+}
+// TalkBack anunciará: "Carrinho, 1 item no carrinho" (singulariza automaticamente)
+
+// Apenas badge sem descrição customizada
+binding.iconFavorite.apply {
+    setIcon(ContextCompat.getDrawable(context, R.drawable.ds_icon_favorite))
+    setBadgeCount(3)
+}
+// TalkBack anunciará: "3 notificações" (descrição padrão)
 
 // Remover badge
 binding.iconNotification.setBadgeCount(0)
+// TalkBack anunciará apenas a descrição do ícone
+```
+
+#### Acessibilidade
+
+O componente **DsIcon** possui suporte completo para leitores de tela com customização total:
+
+- **Ícone com badge:** Anuncia o nome do ícone seguido da contagem e descrição
+  - Exemplo: "Notificações, 5 notificações"
+  - Customizado: "Mensagens, 3 mensagens não lidas"
+- **Ícone sem badge:** Anuncia apenas a descrição do ícone
+  - Exemplo: "Notificações"
+- **Badge sem descrição de ícone:** Anuncia apenas a contagem com descrição
+  - Exemplo: "3 notificações" (padrão)
+  - Customizado: "5 mensagens não lidas"
+- **Singular/Plural automático:** Remove 's' do final para singular
+  - "1 item no carrinho" (de "itens no carrinho")
+  - "5 itens no carrinho"
+
+```kotlin
+// Exemplo com diferentes cenários
+iconView.setIconDescription("Mensagens")
+iconView.setBadgeDescription("mensagens não lidas")
+iconView.setBadgeCount(1) // "Mensagens, 1 mensagem não lida"
+iconView.setBadgeCount(5) // "Mensagens, 5 mensagens não lidas"
+iconView.setBadgeCount(0) // "Mensagens"
+
+// Outro exemplo
+cartIcon.setIconDescription("Carrinho de compras")
+cartIcon.setBadgeDescription("produtos")
+cartIcon.setBadgeCount(1) // "Carrinho de compras, 1 produto"
+cartIcon.setBadgeCount(10) // "Carrinho de compras, 10 produtos"
 ```
 
 #### Personalização
@@ -560,11 +648,48 @@ Postado em Hoje, 09:15"
 
 ## 🎨 Recursos de Acessibilidade
 
-Todos os componentes incluem:
+Todos os componentes incluem suporte completo para leitores de tela e acessibilidade:
+
+### DsText
+- ✅ **Leitura automática** do texto visível pelo TalkBack
+- ✅ **Descrição customizável** via `setAccessibilityDescription()`
+- ✅ **Suporte a texto colorido** com descrição acessível separada
+- ✅ Exemplo: Texto "R$ 99,90" pode ser lido como "noventa e nove reais e noventa centavos"
+
+### DsIcon
+- ✅ **Descrição customizável** via `setIconDescription()` ou XML
+- ✅ **Descrição de badge customizável** via `setBadgeDescription()` ou XML
+- ✅ **Anúncio de badges** com contagem personalizável
+- ✅ **Singular/plural automático** ("1 mensagem não lida" vs "5 mensagens não lidas")
+- ✅ Exemplo padrão: "Notificações, 3 notificações"
+- ✅ Exemplo customizado: "Carrinho, 2 itens no carrinho"
+
+### DsToolbar
+- ✅ **Botão voltar** anuncia "Voltar"
+- ✅ **Menu hambúrguer** anuncia "MENU"
+- ✅ **Ações com badge** incluem contagem no anúncio
+- ✅ **Título** sempre acessível (centralizado ou não)
+- ✅ Navegação clara entre elementos
+
+### DsButton
 - ✅ Suporte completo ao TalkBack
-- ✅ Descrições de conteúdo apropriadas
+- ✅ Estados de habilitado/desabilitado anunciados
+- ✅ Texto do botão claramente identificado
+
+### DsInput
+- ✅ **Toggle de visibilidade de senha** com ação de acessibilidade
+- ✅ Hints e labels apropriados
+- ✅ Validação com feedback acessível
+
+### DsNewsCard & DsNotificationCard
+- ✅ **Informações agrupadas** para anúncio único e claro
+- ✅ Descrição completa com título, conteúdo e timestamp
 - ✅ Navegação por toque exploratório
-- ✅ Ações de acessibilidade personalizadas (ex: toggle de senha)
+
+### Geral
+- ✅ Navegação por toque exploratório
+- ✅ Contraste de cores adequado
+- ✅ Tamanhos de toque >= 48dp (seguindo guidelines do Material Design)
 
 ---
 

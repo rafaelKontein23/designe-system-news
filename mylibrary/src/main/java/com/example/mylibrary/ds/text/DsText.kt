@@ -40,6 +40,8 @@ class DsText @JvmOverloads constructor(
     private var currentTextStyle: TextStyle? = null
 
     init {
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+
         attrs?.let {
             context.withStyledAttributes(it, R.styleable.DsText) {
                 try {
@@ -120,6 +122,28 @@ class DsText @JvmOverloads constructor(
         }
 
         text = spannableString
+    }
+
+    /**
+     * Define uma descrição de acessibilidade customizada.
+     * Por padrão, o TalkBack lê o texto visível.
+     * Use este método quando precisar de uma descrição diferente para acessibilidade.
+     * @param description Descrição que será lida pelo TalkBack
+     */
+    fun setAccessibilityDescription(description: String) {
+        contentDescription = description
+    }
+
+    /**
+     * Remove a descrição de acessibilidade customizada.
+     * O TalkBack voltará a ler o texto visível.
+     */
+    fun clearAccessibilityDescription() {
+        contentDescription = null
+    }
+
+    override fun setText(text: CharSequence?, type: BufferType?) {
+        super.setText(text, type)
     }
 
 

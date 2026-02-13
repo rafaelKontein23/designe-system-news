@@ -31,6 +31,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selecione uma categoria:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.example.mylibrary.ds.chip.DsChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:selectedBackgroundColor="@android:color/holo_blue_dark"
+            app:selectedTextColor="@android:color/white"
+            app:unselectedBackgroundColor="@android:color/darker_gray"
+            app:unselectedTextColor="@android:color/white" />
 
         <com.example.mylibrary.ds.text.DsText
             android:id="@+id/titulo"

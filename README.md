@@ -16,10 +16,11 @@ Biblioteca de componentes UI para Android com Design System personalizado, focad
   - [DsInput](#2-dsinput)
   - [DsText](#3-dstext)
   - [DsChip](#4-dschip)
-  - [DsToolbar](#5-dstoolbar)
-  - [DsNotificationCard](#6-dsnotificationcard)
-  - [DsIcon](#7-dsicon)
-  - [DsNewsCard](#8-dsnewscard)
+  - [DsChipGroup](#5-dschipgroup)
+  - [DsToolbar](#6-dstoolbar)
+  - [DsNotificationCard](#7-dsnotificationcard)
+  - [DsIcon](#8-dsicon)
+  - [DsNewsCard](#9-dsnewscard)
 - [🎨 Recursos de Acessibilidade](#-recursos-de-acessibilidade)
 - [📝 Exemplo Completo](#-exemplo-completo)
 - [💡 Dicas de Uso](#-dicas-de-uso)
@@ -65,7 +66,14 @@ binding.btnLogin.apply {
 binding.inputCpf.setKeyboardType(DsInput.KeyboardType.CPF)
 binding.inputEmail.setKeyboardType(DsInput.KeyboardType.EMAIL)
 
-// 4. Cards de notícia com um método
+// 4. Grupos de chips com seleção única
+val categories = listOf("Tecnologia", "Esportes", "Política")
+binding.chipGroup.apply {
+    addChips(categories)
+    selectChip(0) // Seleciona primeiro
+}
+
+// 5. Cards de notícia com um método
 binding.newsCard.setNews(
     title = "Título da Notícia",
     description = "Descrição completa...",
@@ -287,7 +295,121 @@ binding.chipNew.apply {
 
 ---
 
-### 5. DsToolbar
+### 5. DsChipGroup
+
+Grupo de chips com layout flexível e seleção única (comportamento tipo radio button).
+
+#### Características
+- ✅ Seleção única (apenas um chip por vez)
+- ✅ Wrap automático (quebra de linha quando não cabe)
+- ✅ Espaçamento configurável entre chips
+- ✅ Cores personalizáveis para estados selecionado/não selecionado
+- ✅ Callbacks de seleção com informações detalhadas
+- ✅ Métodos para controle programático da seleção
+- ✅ Suporte a acessibilidade completo
+
+#### Uso no XML
+
+```xml
+<com.example.mylibrary.ds.chip.DsChipGroup
+    android:id="@+id/chipGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:chipSpacing="12dp"
+    app:selectedBackgroundColor="@android:color/holo_green_dark"
+    app:selectedTextColor="@android:color/white"
+    app:unselectedBackgroundColor="@android:color/darker_gray"
+    app:unselectedTextColor="@android:color/white" />
+```
+
+#### Uso programático
+
+```kotlin
+// Adicionar chips usando lista de strings
+val categories = listOf(
+    "Tecnologia",
+    "Esportes",
+    "Política",
+    "Entretenimento",
+    "Negócios",
+    "Ciência"
+)
+binding.chipGroup.addChips(categories)
+
+// Configurar listener de seleção
+binding.chipGroup.setOnChipSelectionListener(
+    object : DsChipGroup.OnChipSelectionListener {
+        override fun onChipSelected(
+            chip: DsChip,
+            position: Int,
+            isSelected: Boolean
+        ) {
+            if (isSelected) {
+                val categoryName = categories[position]
+                Toast.makeText(
+                    this@MainActivity,
+                    "Categoria: $categoryName",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+)
+
+// Selecionar programaticamente
+binding.chipGroup.selectChip(0) // Seleciona o primeiro chip
+
+// Outros métodos úteis
+binding.chipGroup.clearSelection() // Limpa a seleção
+val selectedIndex = binding.chipGroup.getSelectedChipIndex() // Retorna índice (-1 se nenhum)
+val selectedChip = binding.chipGroup.getSelectedChip() // Retorna chip selecionado (null se nenhum)
+
+// Personalizar cores programaticamente
+binding.chipGroup.setChipColors(
+    selectedBg = Color.GREEN,
+    selectedText = Color.WHITE,
+    unselectedBg = Color.GRAY,
+    unselectedText = Color.WHITE
+)
+
+// Adicionar chips individualmente
+val chip = DsChip(context).apply {
+    setDsText("Novo Chip")
+}
+binding.chipGroup.addChip(chip)
+
+// Ajustar espaçamento dinamicamente
+binding.chipGroup.setChipSpacing(16) // 16dp entre chips
+```
+
+#### Exemplo de uso com filtros
+
+```kotlin
+// Cenário: filtrar notícias por categoria
+val categories = listOf("Todas", "Tecnologia", "Esportes", "Política")
+binding.filterChipGroup.apply {
+    addChips(categories)
+    
+    setOnChipSelectionListener(object : DsChipGroup.OnChipSelectionListener {
+        override fun onChipSelected(chip: DsChip, position: Int, isSelected: Boolean) {
+            if (isSelected) {
+                when (position) {
+                    0 -> loadAllNews()
+                    1 -> loadNewsByCategory("tech")
+                    2 -> loadNewsByCategory("sports")
+                    3 -> loadNewsByCategory("politics")
+                }
+            }
+        }
+    })
+    
+    selectChip(0) // Inicia com "Todas" selecionado
+}
+```
+
+---
+
+### 6. DsToolbar
 
 Toolbar customizada com suporte a título, botão de voltar, menu hambúrguer (drawer) e até 2 botões de ação com badges.
 
@@ -434,7 +556,7 @@ binding.toolbar.setActionButtons(
 
 ---
 
-### 6. DsNotificationCard
+### 7. DsNotificationCard
 
 Card de notificação com título, data/hora e chip "NOVO".
 
@@ -472,7 +594,7 @@ binding.notificationCard.apply {
 
 ---
 
-### 7. DsIcon
+### 8. DsIcon
 
 Ícone customizado com suporte a badge de notificação numérico e acessibilidade completa.
 
@@ -579,7 +701,7 @@ O badge tem as seguintes características:
 
 ---
 
-### 8. DsNewsCard
+### 9. DsNewsCard
 
 Card de notícia com imagem, título, descrição e timestamp. Totalmente acessível com contentDescription agrupado.
 
@@ -779,6 +901,7 @@ class MainActivity : AppCompatActivity() {
 | **DsInput** | Campo de entrada com máscaras (CPF, telefone, email, senha, etc.) |
 | **DsText** | Texto com estilos pré-definidos e suporte a múltiplas cores |
 | **DsChip** | Chip personalizado com cores customizáveis |
+| **DsChipGroup** | Grupo de chips com seleção única e layout flexível (wrap automático) |
 | **DsToolbar** | Toolbar com título, drawer, botão voltar e botões de ação |
 | **DsNotificationCard** | Card de notificação com chip "NOVO" |
 | **DsIcon** | Ícone com badge de contador numérico |

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.text.Editable
+import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
@@ -16,10 +17,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.customview.widget.ExploreByTouchHelper
 import com.example.mylibrary.R
-import kotlin.collections.get
-import kotlin.div
-import kotlin.or
-import kotlin.text.compareTo
 import androidx.core.graphics.toColorInt
 
 /**
@@ -73,6 +70,7 @@ class DsInput @JvmOverloads constructor(
     private var touchHelper: ExploreByTouchHelper? = null
 
     private var maskWatcher: TextWatcher? = null
+    private var currentMask: String = ""
 
     init {
         setBackgroundResource(R.drawable.input_border_radius)
@@ -123,6 +121,7 @@ class DsInput @JvmOverloads constructor(
             KeyboardType.CPF -> {
                 inputType = InputType.TYPE_CLASS_NUMBER
                 applyInputMask(MaskType.CPF)
+                filters = arrayOf(InputFilter.LengthFilter(14))
             }
 
             KeyboardType.NUMBER -> {
@@ -132,6 +131,7 @@ class DsInput @JvmOverloads constructor(
             KeyboardType.PHONE -> {
                 inputType = InputType.TYPE_CLASS_NUMBER
                 applyInputMask(MaskType.PHONE)
+                filters = arrayOf(InputFilter.LengthFilter(15))
             }
 
             KeyboardType.EMAIL -> {
@@ -145,6 +145,7 @@ class DsInput @JvmOverloads constructor(
             KeyboardType.DATE -> {
                 inputType = InputType.TYPE_CLASS_NUMBER
                 applyInputMask(MaskType.DATE)
+                filters = arrayOf(InputFilter.LengthFilter(10))
             }
 
             KeyboardType.TEXT -> {
@@ -363,45 +364,59 @@ class DsInput @JvmOverloads constructor(
      * @param maskType O tipo de máscara a ser aplicada
      */
     private fun applyInputMask(maskType: MaskType) {
-        val mask = when (maskType) {
+        currentMask = when (maskType) {
             MaskType.CPF -> "###.###.###-##"
             MaskType.PHONE -> "(##) #####-####"
             MaskType.DATE -> "##/##/####"
         }
 
-        val watcher = object : TextWatcher {
-            var isUpdating = false
-            var oldText = ""
+        maskWatcher = object : TextWatcher {
+            var previousDigitCount = 0
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                previousDigitCount = unmask(s?.toString() ?: "").length
+            }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                if (isUpdating) return
-                val str = unmask(s?.toString().orEmpty())
-                var masked = ""
-                var i = 0
+                val currentText = s?.toString() ?: ""
+                val currentDigits = unmask(currentText)
 
-                for (char in mask) {
-                    if (char != '#' && str.length > oldText.length) {
-                        masked += char
-                        continue
+                // Só aplica a máscara se o número de dígitos aumentou (digitação)
+                if (currentDigits.length > previousDigitCount) {
+                    val masked = applyMask(currentDigits, currentMask)
+                    if (masked != currentText) {
+                        setText(masked)
+                        setSelection(masked.length)
                     }
-                    if (i >= str.length) break
-                    masked += str[i]
-                    i++
                 }
-
-                isUpdating = true
-                setText(masked)
-                setSelection(masked.length)
-                isUpdating = false
-                oldText = str
+                previousDigitCount = currentDigits.length
             }
         }
 
-        maskWatcher = watcher
-        addTextChangedListener(watcher)
+        addTextChangedListener(maskWatcher)
+    }
+
+    /**
+     * Aplica a máscara a uma string de dígitos.
+     */
+    private fun applyMask(digits: String, mask: String): String {
+        val result = StringBuilder()
+        var digitIndex = 0
+        for (char in mask) {
+            if (char == '#') {
+                if (digitIndex < digits.length) {
+                    result.append(digits[digitIndex])
+                    digitIndex++
+                } else {
+                    break
+                }
+            } else {
+                result.append(char)
+            }
+        }
+        return result.toString()
     }
 
     /**
@@ -410,15 +425,8 @@ class DsInput @JvmOverloads constructor(
     private fun clearMask() {
         maskWatcher?.let { removeTextChangedListener(it) }
         maskWatcher = null
+        currentMask = ""
     }
-
-    /**
-     * Remove caracteres de formatação de uma string, mantendo apenas dígitos.
-     *
-     * @param s A string a ser processada
-     * @return String contendo apenas dígitos
-     */
-    private fun unmask(s: String): String = s.replace(Regex("[^\\d]"), "")
 
     /**
      * Alterna entre senha visível e oculta.
@@ -439,5 +447,12 @@ class DsInput @JvmOverloads constructor(
         typeface = currentTypeface
         updatePasswordIcon()
         setSelection(text?.length ?: 0)
+    }
+
+    /**
+     * Remove os caracteres de máscara de uma string.
+     */
+    private fun unmask(masked: String): String {
+        return masked.replace(Regex("[^0-9]"), "")
     }
 }
